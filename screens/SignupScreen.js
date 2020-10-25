@@ -5,12 +5,25 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { AuthContext } from '../navigation/AuthProvider';
 
+import {
+  Dropdown }
+  from 'react-native-material-dropdown';
+
 const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
 
   const {register} = useContext(AuthContext);
+
+  let data = [{
+    value: 'Rentee',
+  }, {
+    value: 'Renter',
+  }, {
+    value: 'Admin',
+  }];
+
 
   return (
     <View style={styles.container}>
@@ -42,6 +55,13 @@ const SignupScreen = ({navigation}) => {
         secureTextEntry={true}
       />
 
+<View style={styles.container2}>
+    <Dropdown
+        label='Which User are you?'
+        data={data}
+      />
+    </View>
+
       <FormButton
         buttonTitle="Sign Up"
         onPress={() => register(email, password)}
@@ -56,13 +76,6 @@ const SignupScreen = ({navigation}) => {
         <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>Privacy Policy</Text>
       </View>
 
-      <SocialButton
-        buttonTitle="Sign Up with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-        onPress={() => {}}
-      />
 
       <SocialButton
         buttonTitle="Sign Up with Google"
@@ -93,10 +106,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  container2: {
+    backgroundColor: '#f9fafd',
+    flex: -1,
+    justifyContent: 'center',
+    width:300,
+    height:50,
+    padding:10,
+    marginBottom:30
+
+
+  },
   text: {
-    
+
     fontSize: 28,
-    marginBottom: 10,
+    marginTop : -50,
+    marginBottom: 30,
     color: '#051d5f',
   },
   navButton: {

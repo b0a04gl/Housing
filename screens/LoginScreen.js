@@ -5,11 +5,24 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { AuthContext } from '../navigation/AuthProvider';
 
+import {
+ Dropdown }
+ from 'react-native-material-dropdown';
+
+
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const {login} = useContext(AuthContext);
+
+  let data = [{
+       value: 'Rentee',
+     }, {
+       value: 'Renter',
+     }, {
+       value: 'Admin',
+     }];
 
   return (
     <View style={styles.container}>
@@ -37,22 +50,28 @@ const LoginScreen = ({navigation}) => {
         secureTextEntry={true}
       />
 
+
+    <View style={styles.container2}>
+    <Dropdown
+        label='Which User are you?'
+        data={data}
+      />
+    </View>
+
+
+
+
       <FormButton
         buttonTitle="Sign In"
         onPress={() => login(email, password)}
       />
 
+
+
       <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      <SocialButton
-        buttonTitle="Sign In with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-        onPress={() => {}}
-      />
 
       <SocialButton
         buttonTitle="Sign In with Google"
@@ -69,6 +88,9 @@ const LoginScreen = ({navigation}) => {
           Don't have an acount? Create here
         </Text>
       </TouchableOpacity>
+
+
+
     </View>
   );
 };
@@ -83,9 +105,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  container2: {
+    backgroundColor: '#f9fafd',
+    flex: -1,
+    justifyContent: 'center',
+    width:300,
+    height:50,
+    padding:10,
+    marginBottom:30
+
+
+  },
   logo: {
     height: 150,
     width: 150,
+    marginTop:40,
     resizeMode: 'cover',
   },
   text: {
@@ -107,3 +141,11 @@ const styles = StyleSheet.create({
 
   },
 });
+
+//
+// <View style={styles.container2}>
+// <Dropdown
+//   label='Favorite Fruit'
+//   data={data}
+// />
+// </View>
