@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 const screenOptionStyle = {
   headerStyle: {
-    backgroundColor: "#9AC4F8",
+    backgroundColor: "#4263ec",
   },
   headerTintColor: "white",
   headerBackTitle: "Back",
@@ -25,9 +25,16 @@ const MainStackNavigator = ({navigation}) => {
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen name="Home" component={Home}
       options={{
+
                headerTitleAlign: 'center',
                headerLeft : ({ color, size }) => (
-                   <MaterialCommunityIcons name="menu" color={color} size={30}
+                   <MaterialCommunityIcons name="text" color={'#fff'} size={30}
+
+                    onPress={() => navigation.openDrawer()}
+                    />
+               ),
+               headerRight : ({ color, size }) => (
+                   <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
                     onPress={() => navigation.openDrawer()}
                     />
@@ -49,7 +56,13 @@ const AddPropertyStackNavigator = ({navigation}) => {
       options={{
                headerTitleAlign: 'center',
                headerLeft : ({ color, size }) => (
-                   <MaterialCommunityIcons name="menu" color={color} size={30}
+                   <MaterialCommunityIcons name="text" color={'#fff'} size={30}
+
+                    onPress={() => navigation.openDrawer()}
+                    />
+               ),
+               headerRight : ({ color, size }) => (
+                   <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
                     onPress={() => navigation.openDrawer()}
                     />
@@ -68,9 +81,17 @@ const ProfileStackNavigator = ({navigation}) => {
       <Stack.Screen name="Profile" component={Profile}
 
       options={{
+
                headerTitleAlign: 'center',
                headerLeft : ({ color, size }) => (
-                   <MaterialCommunityIcons name="menu" color={color} size={30}
+                   <MaterialCommunityIcons name="text" color={'#fff'} size={30}
+
+                    onPress={() => navigation.openDrawer()}
+                    />
+               ),
+
+               headerRight : ({ color, size }) => (
+                   <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
                     onPress={() => navigation.openDrawer()}
                     />
