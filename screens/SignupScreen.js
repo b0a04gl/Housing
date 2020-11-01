@@ -13,7 +13,7 @@ const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
-
+  const [userType, setUserType] = useState();
   const {register} = useContext(AuthContext);
 
   let data = [{
@@ -59,6 +59,7 @@ const SignupScreen = ({navigation}) => {
     <Dropdown
         label='Which User are you?'
         data={data}
+        onChangeText={(userType) => setUserType(userType)}
       />
     </View>
 

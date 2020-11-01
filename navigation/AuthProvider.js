@@ -11,14 +11,15 @@ export const AuthProvider = ({children}) => {
       value={{
         user,
         setUser,
-        login: async (email, password) => {
+
+        login: async (email, password,userType) => {
           try {
             Firebase.auth().signInWithEmailAndPassword(email, password)
           } catch (e) {
             console.log(e);
           }
         },
-        register: async (email, password) => {
+        register: async (email, password,userType) => {
           try {
             Firebase.auth().createUserWithEmailAndPassword(email, password)
           } catch (e) {

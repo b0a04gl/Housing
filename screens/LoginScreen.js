@@ -13,8 +13,33 @@ import {
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
+  const [userType, setUserType] = useState();
   const {login} = useContext(AuthContext);
+
+
+  // const signIn = async () => {
+  //     try {
+  //       const result = await Expo.Google.logInAsync({
+  //         androidClientId:
+  //           "291292229085-isrndrekqne9odbh9fhehosbd78spkhu.apps.googleusercontent.com",
+  //         //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
+  //         scopes: ["profile", "email"]
+  //       })
+  //
+  //       if (result.type === "success") {
+  //         this.setState({
+  //
+  //           // signedIn: true,
+  //           // name: result.user.name,
+  //           // photoUrl: result.user.photoUrl
+  //         })
+  //       } else {
+  //         console.log("cancelled")
+  //       }
+  //     } catch (e) {
+  //       console.log("error", e)
+  //     }
+  //   }
 
   let data = [{
        value: 'Rentee',
@@ -55,6 +80,7 @@ const LoginScreen = ({navigation}) => {
     <Dropdown
         label='Which User are you?'
         data={data}
+        onChangeText={(userType) => setUserType(userType)}
       />
     </View>
 
@@ -63,7 +89,7 @@ const LoginScreen = ({navigation}) => {
 
       <FormButton
         buttonTitle="Sign In"
-        onPress={() => login(email, password)}
+        onPress={() => login(email, password,userType)}
       />
 
 

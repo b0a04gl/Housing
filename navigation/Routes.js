@@ -5,10 +5,12 @@ import {AuthContext} from './AuthProvider';
 import Firebase from '../firebaseConfig';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
+import R1drawer from '../screens/renter/drawernav';
 
 const Routes = () => {
 
   const {user, setUser} = useContext(AuthContext);
+
   const [initializing, setInitializing] = useState(true);
 
   const onAuthStateChanged = (user) => {
@@ -25,7 +27,7 @@ const Routes = () => {
 
     return (
       <NavigationContainer>
-          {user ? <AppStack/> : <AuthStack/>}
+          {user ? <R1drawer/> : <AuthStack/>}
       </NavigationContainer>
     );
 };
