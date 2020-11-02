@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./R1home";
 import AddProperty from "./R1add";
 import Profile from "./R1profile";
+import EditProfile from './R1editProfile';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const Stack = createStackNavigator();
 
@@ -36,7 +37,6 @@ const MainStackNavigator = ({navigation}) => {
                headerRight : ({ color, size }) => (
                    <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
-                    onPress={() => navigation.openDrawer()}
                     />
                ),
 
@@ -64,7 +64,7 @@ const AddPropertyStackNavigator = ({navigation}) => {
                headerRight : ({ color, size }) => (
                    <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
-                    onPress={() => navigation.openDrawer()}
+
                     />
                ),
 
@@ -93,13 +93,37 @@ const ProfileStackNavigator = ({navigation}) => {
                headerRight : ({ color, size }) => (
                    <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
 
-                    onPress={() => navigation.openDrawer()}
+
                     />
                ),
 
            }}
 
       />
+
+      <Stack.Screen name="EditProfile" component={EditProfile}
+
+      options={{
+
+               headerTitleAlign: 'center',
+               headerLeft : ({ color, size }) => (
+                   <MaterialCommunityIcons name="text" color={'#fff'} size={30}
+
+                    onPress={() => navigation.openDrawer()}
+                    />
+               ),
+
+               headerRight : ({ color, size }) => (
+                   <MaterialCommunityIcons name="bell-outline" color={'#fff'} size={30}
+
+
+                    />
+               ),
+
+           }}
+
+      />
+
     </Stack.Navigator>
   );
 }

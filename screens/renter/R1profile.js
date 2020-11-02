@@ -1,63 +1,11 @@
-// import React, { Component } from 'react'
-// import {
-//   StyleSheet,
-//   TouchableOpacity,
-//   Text,
-//   View,
-// } from 'react-native'
-//
-// class R1profile extends Component {
-//   state = {
-//     count: 0
-//   }
-//
-//   onPress = () => {
-//     this.setState({
-//       count: this.state.count + 1
-//     })
-//   }
-//
-//  render() {
-//     return (
-//       <View style={styles.container}>
-//         <TouchableOpacity
-//          style={styles.button}
-//          onPress={this.onPress}
-//         >
-//          <Text>Profile</Text>
-//         </TouchableOpacity>
-//         <View>
-//           <Text>
-//             You clicked { this.state.count } times
-//           </Text>
-//         </View>
-//       </View>
-//     )
-//   }
-// }
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   button: {
-//     alignItems: 'center',
-//     backgroundColor: '#DDDDDD',
-//     padding: 10,
-//     marginBottom: 10
-//   }
-// })
-//
-// export default R1profile;
-
-
-
-import * as React from "react";
-import { View, Text, StatusBar } from "react-native";
+import React, { useContext } from 'react';
+import { View, Text, StatusBar, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import Firebase from '../../firebaseConfig';
+import {AuthContext} from '../../navigation/AuthProvider';
+import FormButton from '../../components/FormButton';
+
 
 const colors = {
   themeColor: "#4263ec",
@@ -70,24 +18,28 @@ const colors = {
 const tasks = [
 
   {
+    id:0,
     task: "Display name",
     icon: "account-tie",
     theme: "#008b8b",
     stamp: "The name appears in welcome note!"
   },
   {
+        id:1,
     task: "Update Email",
     icon: "email",
     theme: "#008b8b",
     stamp: "The email account synced with app!"
   },
   {
+        id:2,
     task: "Update Password",
     icon: "lock-alert",
     theme: "#008b8b",
     stamp: "The Password synced with app!"
   },
   {
+        id:3,
     task: "Delete account",
     icon: "delete",
     theme: "#008b8b",
@@ -95,7 +47,10 @@ const tasks = [
   },
 ];
 
-const Task = ({ task, icon, theme, stamp }) => {
+function Task ({ task, icon, theme, stamp,navigation })  {
+
+
+
   return (
     <View
       style={{
@@ -127,6 +82,14 @@ const Task = ({ task, icon, theme, stamp }) => {
           name="pencil"
           size={30}
           style={{ color: theme }}
+          onPress={() => {
+  /* 1. Navigate to the Details route with params */
+  navigation.navigate('EditProfile', {
+
+            otherParam: ''+task,
+
+          });
+}}
         />
 
       </View>
@@ -134,10 +97,11 @@ const Task = ({ task, icon, theme, stamp }) => {
   );
 };
 
-export default class Tasks extends React.Component {
+export default function R1Profile(props) {
 
-
-  render() {
+  const {user, logout} = useContext(AuthContext);
+// const [initializing, setInitializing] = useState(user.);
+const {navigation} = props;
 
     return (
       <View
@@ -151,7 +115,7 @@ export default class Tasks extends React.Component {
 
           <View style={{ padding: 16 }}>
             <Text style={{ color: colors.white, fontSize: 30 }}>
-              {"Hello,\nBenjamin"}
+              {user.displayName!=null ? "Hello,\n"+user.displayName : "Hello,\nAnonymous"}
             </Text>
 
           </View>
@@ -182,12 +146,31 @@ export default class Tasks extends React.Component {
               icon={task.icon}
               theme={task.theme}
               stamp={task.stamp}
+              navigation = {navigation}
             />
           ))}
         </ScrollView>
+
+    <View style = {styles.container}>
+
+    <FormButton
+      buttonTitle="Logout"
+      onPress={() => logout()}
+    />
+
+    </View>
       </View>
     );
 
-   }
-
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f9fafd',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 60,
+  },
+
+});

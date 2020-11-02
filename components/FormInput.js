@@ -10,7 +10,7 @@ const FormInput = ({labelValue, placeholderText, iconType, ...rest}) => {
             <View style={styles.iconStyle}>
                 <AntDesign name={iconType} size={25} color="#666" />
             </View>
-            <TextInput 
+            <TextInput
                 value={labelValue}
                 style={styles.input}
                 numberOfLines={1}
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         padding: 10,
         flex: 1,
         fontSize: 16,
-        fontFamily:'Lato-Regular',
+        
         color: '#333',
         justifyContent: 'center',
         alignItems: 'center',
