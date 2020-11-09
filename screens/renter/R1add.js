@@ -1,21 +1,58 @@
-import React, { Component } from 'react'
+import React, { Component ,Fragment} from 'react'
 import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  View, SafeAreaView, ScrollView
+  View, ScrollView,
 } from 'react-native'
 import { ButtonGroup } from 'react-native-elements';
-import {
- Dropdown }
- from 'react-native-material-dropdown';
+
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import RangeSlider, { Slider } from 'react-native-range-slider-expo';
 import NumericInput from 'react-native-numeric-input'
 import Constants from 'expo-constants';
+import SearchableDropdown from 'react-native-searchable-dropdown';
+
 const component1 = () => <Text>Residential</Text>
 const component2 = () => <Text>Commercial</Text>
-const component3 = () => <Text>ButtonGroup</Text>
+
+const citiesData =[
+  {
+      id:1,
+      name : 'Mumbai'
+  },{
+    id:2,
+    name : 'Chennai'
+  },{
+    id:3,
+    name : 'Kolkata'
+  },{
+    id:4,
+    name : 'Bangalore'
+  },{
+    id:5,
+    name : 'Hyderabad'
+  },
+  {
+    id:6,
+    name : 'Ahmedabad'
+  },
+  {
+    id:7,
+    name : 'Pune'
+  },
+  {
+    id:8,
+    name : 'Amaravathi'
+  },{
+    id:9,
+    name:'Vishag'
+  },
+  {
+    id:10,
+    name:'Jaipur'
+  }
+];
 
 
 class R1add extends Component {
@@ -31,11 +68,25 @@ class R1add extends Component {
       fromValue:0,
       toValue:0,
       bedCount:0,
-      bathroomCount:0
+      bathroomCount:0,
+      selectedItems: [
+        {
+          id:5,
+          name : 'Hyderabad'
+        },
+        {
+          id:6,
+          name : 'Ahmedabad'
+        },
+
+      ]
     }
     this.updateIndex = this.updateIndex.bind(this)
 
   }
+
+
+
   updateIndex (selectedIndex) {
 
     console.log(selectedIndex);
@@ -50,7 +101,63 @@ class R1add extends Component {
 
     return (
 
-      <ScrollView >
+      <ScrollView keyboardShouldPersistTaps="handled">
+      <View style={{ padding: 16 }}>
+        <Text style={{ color: '#000', fontSize: 20 }}>
+          Location
+        </Text>
+
+      </View>
+      <Fragment>
+                {/* Multi */}
+                <SearchableDropdown
+                  multi={true}
+                  selectedItems={this.state.selectedItems}
+                  onItemSelect={(item) => {
+                    const items = this.state.selectedItems;
+                    items.push(item)
+                    this.setState({ selectedItems: items });
+                  }}
+                  containerStyle={{ padding: 5 }}
+                  onRemoveItem={(item, index) => {
+                    const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
+                    this.setState({ selectedItems: items });
+                  }}
+                  itemStyle={{
+                    padding: 10,
+                    marginTop: 2,
+                    backgroundColor: '#ddd',
+                    borderColor: '#bbb',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                  }}
+                  itemTextStyle={{ color: '#222' }}
+                  itemsContainerStyle={{ maxHeight: 140 }}
+                  items={citiesData}
+                  defaultIndex={0}
+                  chip={true}
+                  resetValue={false}
+                  textInputProps={
+                    {
+                      placeholder: "Select the location",
+                      underlineColorAndroid: "transparent",
+                      style: {
+                          padding: 12,
+                          borderWidth: 1,
+                          borderColor: '#ccc',
+                          borderRadius: 25,
+                      },
+                      onTextChange: text => alert(text)
+                    }
+                  }
+                  listProps={
+                    {
+                      nestedScrollEnabled: true,
+                    }
+                  }
+                />
+
+      </Fragment>
 
       <View style={{ padding: 16 }}>
         <Text style={{ color: '#000', fontSize: 20 }}>
@@ -219,14 +326,17 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
 <View style={{padding:10,alignSelf:'center'}}>
            <NumericInput
              value={this.state.bedCount}
-             onChange={value => this.setState({bedCount:value})}
+             onChange={value => {this.setState({bedCount:value})}}
              onLimitReached={(isMax,msg) => console.log(isMax,msg)}
              totalWidth={240}
              totalHeight={50}
              iconSize={25}
              step={1}
-             valueType='real'
-             rounded
+             initValue={0}
+             valueType='integer'
+             minValue={0}
+             maxValue={5}
+               rounded='true'
              textColor='#000'
              iconStyle={{ color: 'white' }}
              rightButtonBackgroundColor='#FF6347'
@@ -255,8 +365,10 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
               totalHeight={50}
               iconSize={25}
               step={1}
+              rounded='true'
               valueType='real'
-              rounded
+              minValue={0}
+              maxValue={5}
               textColor='#000'
               iconStyle={{ color: 'white' }}
               rightButtonBackgroundColor='#FF6347'
