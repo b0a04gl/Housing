@@ -5,6 +5,7 @@ import Home from "./R1home";
 import AddProperty from "./R1add";
 import Profile from "./R1profile";
 import EditProfile from './R1editProfile';
+import CardDetails from './CardDetails';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const Stack = createStackNavigator();
 
@@ -44,6 +45,17 @@ const MainStackNavigator = ({navigation}) => {
 
       />
 
+      <Stack.Screen name="CardDetails" component={CardDetails}
+
+      options={({route}) => ({
+        // title: route.params.title,
+        headerBackTitleVisible: false,
+        headerTitle: false,
+        headerTransparent: true,
+        headerTintColor: '#fff'
+      })}
+      />
+
     </Stack.Navigator>
   );
 }
@@ -70,6 +82,8 @@ const AddPropertyStackNavigator = ({navigation}) => {
 
            }}
       />
+
+
     </Stack.Navigator>
   );
 }

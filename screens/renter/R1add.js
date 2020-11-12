@@ -1,9 +1,9 @@
-import React, { Component ,Fragment} from 'react'
+import React, { Component  ,Fragment} from 'react'
 import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  View, ScrollView,
+  View, ScrollView,Button,Image
 } from 'react-native'
 import { ButtonGroup } from 'react-native-elements';
 
@@ -12,6 +12,15 @@ import RangeSlider, { Slider } from 'react-native-range-slider-expo';
 import NumericInput from 'react-native-numeric-input'
 import Constants from 'expo-constants';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import FormButton from '../../components/FormButton';
+import Firebase from '../../firebaseConfig';
+// import { ImagePicker, Permissions } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+// import Constants from 'expo-constants';
+
+import Toast from 'react-native-simple-toast';
+
 
 const component1 = () => <Text>Residential</Text>
 const component2 = () => <Text>Commercial</Text>
@@ -56,35 +65,109 @@ const citiesData =[
 
 
 class R1add extends Component {
+
+
+
+
   state = {
     count: 0
   }
 
-  constructor () {
-    super()
+  constructor (props) {
+    super(props);
     this.state = {
+      image: null,
+      imageURL:null,
       propType: 2,
       propSubtype: null,
-      fromValue:0,
-      toValue:0,
+      propPrice:0,
+      propArea:0,
       bedCount:0,
       bathroomCount:0,
       selectedItems: [
-        {
-          id:5,
-          name : 'Hyderabad'
-        },
-        {
-          id:6,
-          name : 'Ahmedabad'
-        },
 
-      ]
+
+      ],
+      user: Firebase.auth().currentUser
     }
-    this.updateIndex = this.updateIndex.bind(this)
 
+    this.updateIndex = this.updateIndex.bind(this)
+    this.saveToDB = this.saveToDB.bind(this)
   }
 
+  selectPicture = async () => {
+      await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+      aspect: [4, 3],
+      });
+      if (!cancelled)
+    {
+      Toast.show('Wait for some seconds for uploading image 👋', Toast.SHORT, [
+    'UIAlertController',
+    ]);
+       this.setState({ image: uri });
+
+       const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+       const response = await fetch(uri);
+       const blob = await response.blob();
+       Firebase
+         .storage()
+         .ref().child("images/"+imageName)
+         .put(blob)
+         .then((snapshot) => {
+           console.log(`${imageName} has been successfully uploaded.`);
+
+           Toast.show('Image uploaded successfully 👋', Toast.SHORT, [
+     'UIAlertController',
+     ]);
+           snapshot.ref.getDownloadURL().then((url) => {
+             this.setState({
+               imageURL: url,
+             });
+
+           });
+         })
+         .catch((e) => console.log('uploading image error => ', e));
+
+    }
+
+    };
+
+    takePicture = async ({}) => {
+      await Permissions.askAsync(Permissions.CAMERA);
+
+
+
+      const { cancelled, uri } = await ImagePicker.launchCameraAsync({
+        allowsEditing: false,
+      aspect: [4, 3],
+      });
+      if (!cancelled)
+    {
+       this.setState({ image: uri });
+
+       const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+       const response = await fetch(uri);
+       const blob = await response.blob();
+       Firebase
+         .storage()
+         .ref().child("images/"+imageName)
+         .put(blob)
+         .then((snapshot) => {
+           console.log(`${imageName} has been successfully uploaded.`);
+           snapshot.ref.getDownloadURL().then((url) => {
+             this.setState({
+               imageURL: url,
+             });
+
+
+           });
+         })
+         .catch((e) => console.log('uploading image error => ', e));
+
+    }
+    };
 
 
   updateIndex (selectedIndex) {
@@ -94,9 +177,63 @@ class R1add extends Component {
     this.setState({propType:selectedIndex})
   }
 
+saveToDB = () =>{
+
+
+
+
+    let locations=[];
+
+    for(var i=0;i<this.state.selectedItems.length;i++)
+        locations.push(this.state.selectedItems[i].name);
+
+    var today  = new Date();
+
+    console.log(today.toLocaleDateString("en-US")); // 9/17/2016
+
+    let propData = [];
+    propData['date'] = today.toLocaleDateString("en-US");
+    propData['locations'] = locations;
+    propData['propType'] = this.state.propType==0?'Residential' : 'Commercial';
+    propData['propSubtype'] = this.state.propSubtype;
+    propData['propPrice'] = this.state.propPrice;
+    propData['propArea'] = this.state.propArea;
+    propData['bedCount'] = this.state.bedCount;
+    propData['bathroomCount'] = this.state.bathroomCount;
+    propData['imageURL'] = this.state.imageURL;
+
+    // console.log(propData['location']);
+
+    Firebase.database().ref('/properties/'+this.state.user.uid).push(propData).then(() => {
+
+
+      this.setState({
+        image: null,
+        imageURL:null,
+        propType: 2,
+        propSubtype: null,
+        propPrice:0,
+        propArea:0,
+        bedCount:0,
+        bathroomCount:0,
+        selectedItems: []
+      });
+
+
+    }).catch((error) => {
+        console.log(error);
+    });
+
+
+    this.props.navigation.navigate('Home');
+}
+
 
   render () {
     const buttons = [{ element: component1 }, { element: component2 }]
+    // console.log(this.state.user.uid);
+    const navigation = this.props.navigation;
+
 
 
     return (
@@ -170,7 +307,7 @@ class R1add extends Component {
         selectedIndex={this.state.propType
         }
         buttons={buttons}
-        containerStyle={{height: 50}} />
+        containerStyle={{height: 40}} />
 
         {this.state.propType == 0 ?
 
@@ -295,19 +432,64 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
 
            <View style={{ padding: 16 }}>
              <Text style={{ color: '#000', fontSize: 20 }}>
-               Price range
+               Property Price
              </Text>
+             <View style={{padding:10,alignSelf:'center'}}>
+                        <NumericInput
+                          value={this.state.propPrice}
+                          onChange={value => {this.setState({propPrice:value})}}
+                          onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                          totalWidth={180}
+                          totalHeight={50}
+                          iconSize={25}
+                          step={500}
+
+                          valueType='integer'
+                          minValue={0}
+                          maxValue={100000}
+                            rounded='true'
+                          textColor='#000'
+                          iconStyle={{ color: 'white' }}
+                          rightButtonBackgroundColor='#FF6347'
+                          leftButtonBackgroundColor='#FF6347'/>
+             </View>
 
 
-             <View>
-                                 <RangeSlider min={20000} max={50000}
-                                      fromValueOnChange={value => {this.setState({fromValue:value})}}
-                                      toValueOnChange={value => {this.setState({toValue:value})}}
-                                      initialFromValue={30000}
-                                 />
-                                 <Text style={styles.categoryBtnTxt}>MIN value:  {this.state.fromValue}</Text>
-                                 <Text style={styles.categoryBtnTxt}>MAX value:  {this.state.toValue}</Text>
-                            </View>
+
+           </View>
+
+           <View
+             style={{
+               borderBottomColor: 'black',
+               borderBottomWidth: 1,
+             }}
+           />
+
+
+           <View style={{ padding: 16 }}>
+             <Text style={{ color: '#000', fontSize: 20 }}>
+               Property Area(Sq.ft)
+             </Text>
+             <View style={{padding:10,alignSelf:'center'}}>
+                        <NumericInput
+                          value={this.state.propArea}
+                          onChange={value => {this.setState({propArea:value})}}
+                          onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                          totalWidth={180}
+                          totalHeight={50}
+                          iconSize={25}
+                          step={10}
+
+                          valueType='integer'
+                          minValue={0}
+                          maxValue={500}
+                            rounded='true'
+                          textColor='#000'
+                          iconStyle={{ color: 'white' }}
+                          rightButtonBackgroundColor='#FF6347'
+                          leftButtonBackgroundColor='#FF6347'/>
+             </View>
+
 
 
            </View>
@@ -328,11 +510,11 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
              value={this.state.bedCount}
              onChange={value => {this.setState({bedCount:value})}}
              onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-             totalWidth={240}
+             totalWidth={180}
              totalHeight={50}
              iconSize={25}
              step={1}
-             initValue={0}
+
              valueType='integer'
              minValue={0}
              maxValue={5}
@@ -361,7 +543,7 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
               value={this.state.bathroomCount}
               onChange={value => this.setState({bathroomCount:value})}
               onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-              totalWidth={240}
+              totalWidth={180}
               totalHeight={50}
               iconSize={25}
               step={1}
@@ -376,6 +558,38 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
       </View>
 </View>
 
+           <View
+             style={{
+               borderBottomColor: 'black',
+               borderBottomWidth: 1,
+             }}
+           />
+
+
+           <View style={{padding:16, alignItems: 'center',
+    justifyContent: 'center'}}>
+                 <Text style={{ color: '#000', fontSize: 20,padding:30}}>
+                   Images
+                 </Text>
+
+                 <Image style={styles.image} source={{ uri: this.state.image }} />
+         <View style={styles.row}>
+
+           <TouchableOpacity style={styles.button} onPress={this.selectPicture}>
+            <Text style={styles.text}>Gallery</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={this.takePicture}>
+             <Text style={styles.text}>Camera</Text>
+             </TouchableOpacity>
+
+         </View>
+    </View>
+
+<FormButton
+  buttonTitle="ADD PROPERTY"
+  onPress={this.saveToDB}
+/>
 
 </ScrollView>
 
@@ -418,8 +632,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: 70,
-    height: 70,
+    width: 55,
+    height: 55,
     backgroundColor: '#87ceeb' /* '#FF6347' */,
     borderRadius: 50,
   },
@@ -428,6 +642,16 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#000',
   },
+  text: {
+   fontSize: 21,
+ },
+ row: { flexDirection: 'row' },
+ image: { width: 300, height: 300, backgroundColor: 'gray' },
+ button: {
+   padding: 13,
+   margin: 15,
+   backgroundColor: '#dddddd',
+ },
 })
 
 export default R1add;

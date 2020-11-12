@@ -1,55 +1,71 @@
-import React, { Component } from 'react'
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  View,
-} from 'react-native'
 
-class R1home extends Component {
-  state = {
-    count: 0
-  }
+import React, { useContext, useEffect, useRef } from "react";
+import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
+import Firebase from '../../firebaseConfig';
+import Card from '../../components/Card';
 
-  onPress = () => {
-    this.setState({
-      count: this.state.count + 1
-    })
-  }
+const CardListScreen = ({navigation}) => {
 
- render() {
+  const [myProperties, setMyProperties] = React.useState([]);
+  const user = Firebase.auth().currentUser;
+    useEffect(() => {
+      let dbRef = Firebase.database().ref('/properties/'+user.uid);
+      if (dbRef) {
+        dbRef.on('value', (data) => {
+
+          // console.log(data.val());
+          if (data.val()) {
+            var temp = data.val();
+            var keys = Object.keys(temp);
+            var x = [];
+            for (var index = 0; index < keys.length; index++) {
+              var key = keys[index];
+
+              x.push(temp[key]);
+              x[index]['id'] = key;
+              //console.log(x[index]);
+            }
+            setMyProperties(x);
+
+
+          }
+          else {
+            setMyProperties([]);
+          }
+        });
+      }
+
+    }, []);
+
+
+    const renderItem = ({item}) => {
+
+
+        return (
+            <Card
+                itemData={item}
+                onPress={()=> navigation.navigate('CardDetails', {itemData: item})}
+            />
+        );
+    };
+
     return (
       <View style={styles.container}>
-
-
-        <TouchableOpacity
-         style={styles.button}
-         onPress={this.onPress}
-        >
-         <Text>Home</Text>
-        </TouchableOpacity>
-        <View>
-          <Text>
-            You clicked { this.state.count } times
-          </Text>
-        </View>
+        <FlatList
+            data={myProperties}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+        />
       </View>
-    )
-  }
-}
+    );
+};
+
+export default CardListScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center'
   },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    marginBottom: 10
-  }
-})
-
-export default R1home;
+});
