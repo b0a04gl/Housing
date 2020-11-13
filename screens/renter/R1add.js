@@ -3,7 +3,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  View, ScrollView,Button,Image
+  View, ScrollView,Button,Image,TextInput
 } from 'react-native'
 import { ButtonGroup } from 'react-native-elements';
 
@@ -20,10 +20,18 @@ import * as ImagePicker from 'expo-image-picker';
 // import Constants from 'expo-constants';
 
 import Toast from 'react-native-simple-toast';
-
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 
 const component1 = () => <Text>Residential</Text>
 const component2 = () => <Text>Commercial</Text>
+
+const component3= () => <Text>Sell</Text>
+const component4= () => <Text>Lease</Text>
+const component5 = () => <Text>Rent</Text>
+
+const component6= () => <Text>Yearly</Text>
+const component7= () => <Text>Monthly</Text>
+const component8 = () => <Text>Weekly</Text>
 
 const citiesData =[
   {
@@ -76,18 +84,27 @@ class R1add extends Component {
   constructor (props) {
     super(props);
     this.state = {
+      action:null,
       image: null,
       imageURL:null,
+      frequency:null,
       propType: 2,
       propSubtype: null,
       propPrice:0,
       propArea:0,
       bedCount:0,
       bathroomCount:0,
-      selectedItems: [
+      selectedItems: [],
+      region: {
+     latitude: 13.067439,
+     longitude: 80.237617,
+     latitudeDelta: 0.1,
+     longitudeDelta: 0.1
+   },
+   markers: [],
+propDescription:'type here...',
+height:30,
 
-
-      ],
       user: Firebase.auth().currentUser
     }
 
@@ -192,6 +209,7 @@ saveToDB = () =>{
     console.log(today.toLocaleDateString("en-US")); // 9/17/2016
 
     let propData = [];
+    propData['action'] = this.state.action==0?'Sell':(this.state.action==1?'Lease':'Rent');
     propData['date'] = today.toLocaleDateString("en-US");
     propData['locations'] = locations;
     propData['propType'] = this.state.propType==0?'Residential' : 'Commercial';
@@ -202,6 +220,9 @@ saveToDB = () =>{
     propData['bathroomCount'] = this.state.bathroomCount;
     propData['imageURL'] = this.state.imageURL;
 
+    propData['markers'] = this.state.markers;
+    propData['propDescription'] = this.state.propDescription;
+    propData['frequency'] = this.state.frequency;
     // console.log(propData['location']);
 
     Firebase.database().ref('/properties/'+this.state.user.uid).push(propData).then(() => {
@@ -217,6 +238,7 @@ saveToDB = () =>{
         bedCount:0,
         bathroomCount:0,
         selectedItems: []
+
       });
 
 
@@ -231,6 +253,8 @@ saveToDB = () =>{
 
   render () {
     const buttons = [{ element: component1 }, { element: component2 }]
+      const buttons2 = [{ element: component3 }, { element: component4 }, { element: component5 }]
+      const buttons3 = [{ element: component6 }, { element: component7 }, { element: component8 }]
     // console.log(this.state.user.uid);
     const navigation = this.props.navigation;
 
@@ -251,7 +275,8 @@ saveToDB = () =>{
                   multi={true}
                   selectedItems={this.state.selectedItems}
                   onItemSelect={(item) => {
-                    const items = this.state.selectedItems;
+                    var items = this.state.selectedItems;
+                    items=[];
                     items.push(item)
                     this.setState({ selectedItems: items });
                   }}
@@ -295,6 +320,62 @@ saveToDB = () =>{
                 />
 
       </Fragment>
+      <View
+        style={{
+          borderBottomColor: 'black',
+          borderBottomWidth: 1,
+        }}
+      />
+      <View style={{ padding: 16 }}>
+        <Text style={{ color: '#000', fontSize: 20 }}>
+          Action
+        </Text>
+
+      </View>
+      <View style={{padding:16}}>
+      <ButtonGroup
+        onPress={  (selectedIndex)=>{ this.setState({action:selectedIndex})}}
+        selectedIndex={this.state.action}
+        buttons={buttons2}
+        containerStyle={{height: 40}} />
+        </View>
+
+
+        {this.state.action!='0' && this.state.action!=null ?
+
+            <View>
+                <View
+                style={{
+                  borderBottomColor: 'black',
+                  borderBottomWidth: 1,
+                }}
+              />
+              <View style={{ padding: 16 }}>
+                <Text style={{ color: '#000', fontSize: 20 }}>
+                  Frequency
+                </Text>
+
+              </View>
+              <View style={{padding:16}}>
+              <ButtonGroup
+                onPress={  (selectedIndex)=>{ this.setState({frequency:selectedIndex})}}
+                selectedIndex={this.state.frequency}
+                buttons={buttons3}
+                containerStyle={{height: 40}} />
+                </View>
+          </View>
+        : null}
+
+
+
+
+
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: 1,
+          }}
+        />
 
       <View style={{ padding: 16 }}>
         <Text style={{ color: '#000', fontSize: 20 }}>
@@ -558,6 +639,36 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
       </View>
 </View>
 
+<View
+  style={{
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+  }}
+/>
+
+  <View style={{padding:16, alignItems: 'center',
+  justifyContent: 'center'}}>
+      <Text style={{ color: '#000', fontSize: 20,padding:30}}>
+        Description
+      </Text>
+      <View style={{borderWidth:1,alignSelf:'center'}}>
+            <TextInput
+
+                multiline={true}
+                onChangeText={(text) => {
+                    this.setState({ propDescription : text })
+                }}
+                onContentSizeChange={(event) => {
+                    this.setState({ height: event.nativeEvent.contentSize.height })
+                }}
+                style={[styles.default, {height: Math.max(75, this.state.height),width:300}]}
+                value={this.state.propDescription}
+              />
+</View>
+</View>
+
+
+
            <View
              style={{
                borderBottomColor: 'black',
@@ -586,11 +697,48 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
          </View>
     </View>
 
+
+               <View
+                 style={{
+                   borderBottomColor: 'black',
+                   borderBottomWidth: 1,
+                 }}
+               />
+
+
+
+
+
+                 <View style={{}}>
+                 <Text style={{ color: '#000', fontSize: 25 ,padding:10}}>
+                   Geo Locations
+                 </Text>
+
+                 <Text style={{ color: '#000', fontSize: 17,alignSelf:'center' ,padding:10}}>
+                      Press any place in the map to mark the location
+                 </Text>
+                     <View style={[styles.section, {height: 250}]}>
+                           <MapView style={{flex: 1}} provider={PROVIDER_GOOGLE} region={this.state.region}
+                 onPress={(e) => this.setState({ markers: [...this.state.markers, { latlng: e.nativeEvent.coordinate }] })}>
+                 {
+                     this.state.markers.map((marker, i) => (
+                         <MapView.Marker key={i} coordinate={marker.latlng} />
+                     ))
+                 }
+                 </MapView>
+                     </View>
+                 </View>
+
+
+
+
+
+ <View style={{padding:16}}>
 <FormButton
   buttonTitle="ADD PROPERTY"
   onPress={this.saveToDB}
 />
-
+</View>
 </ScrollView>
 
     )

@@ -3,9 +3,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 
 
 const Card = ({itemData, onPress}) => {
-console.log("//////////////////////////////////////////////////////////////////////");
-console.log(itemData);
-console.log("//////////////////////////////////////////////////////////////////////");
+
 
 var locations = '';
 
@@ -15,6 +13,8 @@ for(var i=0;i<itemData.locations.length;i++)
 }
 
 locations = locations.substring(0,locations.length-2);
+
+var freq = itemData.frequency!=null ? itemData.frequency : '';
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -27,7 +27,7 @@ locations = locations.substring(0,locations.length-2);
           />
         </View>
         <View style={styles.cardInfo}>
-        <Text style={styles.cardTitle}>${itemData.propPrice}</Text>
+        <Text style={styles.cardTitle}>${itemData.propPrice+" "+freq}</Text>
           <Text style={styles.cardDetails}>{locations}</Text>
         <Text style={styles.cardDetails}>{itemData.bedCount+" Beds  "+itemData.bathroomCount+" Baths "+itemData.propArea+" Sqft"}</Text>
 
