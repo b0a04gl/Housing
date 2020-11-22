@@ -7,6 +7,8 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  TouchableOpacity,
+  Linking
 } from 'react-native';
 import HeaderImageScrollView, {
   TriggeringView,
@@ -15,11 +17,65 @@ import HeaderImageScrollView, {
 import * as Animatable from 'react-native-animatable';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import qs from 'qs';
+import call from 'react-native-phone-call';
+import FormButton from '../../components/FormButton';
 
 const MIN_HEIGHT = Platform.OS === 'ios' ? 90 : 55;
 const MAX_HEIGHT = 350;
 
-const CardItemDetails = ({route}) => {
+import Firebase from '../../firebaseConfig';
+
+ async function sendEmail(to, subject, body, options = {}) {
+    const { cc, bcc } = options;
+
+    let url = `mailto:${to}`;
+
+    // Create email link query
+    const query = qs.stringify({
+        subject: subject,
+        body: body,
+        cc: cc,
+        bcc: bcc
+    });
+
+    if (query.length) {
+        url += `?${query}`;
+    }
+
+    // check if we can use this link
+    const canOpen = await Linking.canOpenURL(url);
+
+    if (!canOpen) {
+        throw new Error('Provided URL can not be handled');
+    }
+
+    return Linking.openURL(url);
+}
+
+function Amenities ({ name,icon,index,color,category })  {
+
+
+  return (
+    <TouchableOpacity style = {styles.categoryContainer}>
+
+
+      <MaterialCommunityIcons
+        name={icon}
+        size={16}
+        color='#fff'
+
+      />
+      <Text style={styles.category}>{name}</Text>
+
+    </TouchableOpacity>
+  );
+
+};
+
+
+
+const CardItemDetails = ({navigation,route}) => {
 
 
 
@@ -43,12 +99,94 @@ The Residence located in Al Olaya district. Nearby kingdom tower
 It offers gym 24 hours, high-speed Wi-Fi, with private entrance and security CCTV cameras 24-hour, BBQ area.\n
 The apartment designed for Executive and senior it is suitable for corporate and travelers' leisure with hospitality service.\n`;
 
+const miscellaneous = itemData.amenities[0];
+const HealthFitness = itemData.amenities[1];
+const RecreationFamily = itemData.amenities[2];
+const Building = itemData.amenities[3];
+const Security = itemData.amenities[4];
+const TransportationTechnology = itemData.amenities[5];
+const Services = itemData.amenities[6];
 
-var features = `Fully furnished Apartment with a total area of 75 sqm\n
-Contains one king bed with a private bathroom \n \t\t\t\t\t\t\t-> shower \n \t\t\t\t\t\t\t-> living room with screen TV 55 inch \n \t\t\t\t\t\t\t-> air-condition \n \t\t\t\t\t\t\t-> bathroom for guests \n \t\t\t\t\t\t\t-> mini kitchen with a dining table.\n It equipped with \n\t\t\t\t\t\t\t-> cutleries and microwaves, \n\t\t\t\t\t\t\t-> a refrigerator, \n \t\t\t\t\t\t\t-> washing – dryer machine,\n\t\t\t\t\t\t\t-> iron,\n \t\t\t\t\t\t\t-> kettle,\n\t\t\t\t\t\t\t-> safety box.`;
+const frequency = itemData.frequency==null ? 'Only' : itemData.frequency; 
+
+const initiateCall = () => {
+    // Check for perfect 10 digit length
+
+var mobileNumber = itemData.contactNo;
+
+    if (mobileNumber.length != 10) {
+      alert('Please insert correct contact number');
+      return;
+    }
+
+    const args = {
+      number: mobileNumber,
+      prompt: true,
+    };
+    // Make a call
+    call(args).catch(console.error);
+  };
 
 
-var services = `Services: Gym - weekly cleaning service - 24/7 security guards -maintenance service - Wi-Fi service - business center - barbecue - parking.`;
+const initiateMail = () => {
+
+  var mailto = itemData.mailId;
+
+  sendEmail(
+    mailto,
+    'Request for proposal!',
+    "Hey there! I'm interested in buying/selling/leasing the property you posted,which is located in "+locations
+).then(() => {
+    console.log('Our email successful provided to device mail ');
+});
+
+}
+
+const initiateWhatsApp = () => {
+
+var mobileNumber = itemData.whatsappNo;
+
+var whatsAppMsg = "Hey there! I'm interested in buying/selling/leasing the property you posted,which is located in "+locations;
+    // Check for perfect 10 digit length
+    if (mobileNumber.length != 10) {
+      alert('Please insert correct WhatsApp number');
+      return;
+    }
+    // Using 91 for India
+    // You can change 91 with your country code
+    let url =
+      'whatsapp://send?text=' +
+       whatsAppMsg +
+      '&phone=91' + mobileNumber;
+    Linking.openURL(url)
+      .then((data) => {
+        console.log('WhatsApp Opened');
+      })
+      .catch(() => {
+        alert('Make sure Whatsapp installed on your device');
+      });
+  };
+
+
+const deleteProperty = () => {
+
+  const user = Firebase.auth().currentUser;
+
+  Firebase.database().ref('/properties/'+user.uid+"/"+itemData.propID).remove().then(() => {
+
+    Toast.show('Property deleted successfully 👋', Toast.SHORT, [
+'UIAlertController',
+]);
+
+  }).catch((error) => {
+      console.log(error);
+  });
+
+navigation.navigate('Home');
+
+}
+
+
 
   return (
     <View style={styles.container}>
@@ -76,7 +214,7 @@ var services = `Services: Gym - weekly cleaning service - 24/7 security guards -
           onHide={() => navTitleView.current.fadeInUp(200)}
           onDisplay={() => navTitleView.current.fadeOut(100)}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={styles.title}>${itemData.propPrice+" yearly"} </Text>
+            <Text style={styles.title}>${itemData.propPrice+" "+frequency} </Text>
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
                 <Text style={styles.cardDetails}>{locations}</Text>
 
@@ -121,62 +259,194 @@ var services = `Services: Gym - weekly cleaning service - 24/7 security guards -
                 </View>
 
 
-                <View style={styles.section}>
-
-                                    <Text style={styles.sectionTitle}>Features</Text>
-
-
-                                      <Text style={styles.sectionContent}>{features}</Text>
-                        </View>
 
 
                 <View style={[styles.section,styles.sectionLarge]}>
 
                 <Text style={styles.sectionTitle}>Description</Text>
-                  <Text style={styles.sectionContent}>{description}</Text>
+                  <Text style={styles.sectionContent}>{itemData.propDescription}</Text>
                 </View>
 
 
                 <View style={styles.section}>
-                                    <Text style={styles.sectionTitle}>Services</Text>
+                                    <Text style={styles.sectionTitle}>Amenities / Features</Text>
                           <View style={styles.categories}>
 
-                              <View style={styles.categoryContainer}>
-                                <MaterialCommunityIcons
-                                  name="spray-bottle"
-                                  size={16}
-                                  color="#fff"
-                                />
-                                <Text style={styles.category}>Weekly cleaning service</Text>
-                              </View>
+                          {miscellaneous!=null ?
+
+                            <View style={styles.section}>
+                                                <Text style={styles.sectionTitle}>Miscellaneous</Text>
+                                      <View style={[styles.categories]}>
+
+                                      {miscellaneous.map((am,index)=> (
+                                        <Amenities
+                                          name={am.name}
+                                          icon={am.icon}
+                                          key={am.index}
+                                          index={am.index}
+                                          color={am.color}
+                                          category= {am.category}
+                                        />
+                                      ))}
+                                      </View>
+                                    </View>
+                              :
+                              null
+
+                          }
 
 
-                              <View style={styles.categoryContainer}>
-                                <MaterialCommunityIcons
-                                  name="security"
-                                  size={16}
-                                  color="#fff"
-                                />
-                                <Text style={styles.category}>24/7 security guards</Text>
-                              </View>
+                          {HealthFitness != null  ?
 
-                              <View style={styles.categoryContainer}>
-                              <MaterialCommunityIcons
-                                name="wifi"
-                                size={16}
-                                color="#fff"
-                              />
-                                <Text style={styles.category}>Wifi Service</Text>
-                              </View>
+                            <View style={styles.section}>
+                                                <Text style={styles.sectionTitle}>Health and Fitness</Text>
+                                      <View style={styles.categories}>
 
-                              <View style={styles.categoryContainer}>
-                              <MaterialCommunityIcons
-                                name="car-electric"
-                                size={16}
-                                color="#fff"
-                              />
-                                <Text style={styles.category}>Car Parking</Text>
-                              </View>
+                                      {HealthFitness.map((am,index)=> (
+                                        <Amenities
+                                          name={am.name}
+                                          icon={am.icon}
+                                          key={am.index}
+                                          index={am.index}
+                                          color={am.color}
+                                          category= {am.category}
+                                        />
+                                      ))}
+                                      </View>
+                                    </View>
+
+                              :
+                              null
+                          }
+
+                          {RecreationFamily != null ?
+
+                            <View style={styles.section}>
+                                                <Text style={styles.sectionTitle}>Recreation and Family</Text>
+                                      <View style={styles.categories}>
+
+
+                                        {RecreationFamily.map((am,index)=> (
+                                          <Amenities
+                                            name={am.name}
+                                            icon={am.icon}
+                                            key={am.index}
+                                            index={am.index}
+                                            color={am.color}
+                                            category= {am.category}
+                                          />
+                                        ))}
+
+                                      </View>
+                                    </View>
+
+                                    : null
+                          }
+
+                          {Building != null ?
+
+                            <View style={styles.section}>
+                                      <Text style={styles.sectionTitle}>Building</Text>
+                            <View style={styles.categories}>
+
+
+                                {Building.map((am,index)=> (
+                                  <Amenities
+                                    name={am.name}
+                                    icon={am.icon}
+                                    key={am.index}
+                                    index={am.index}
+                                    color={am.color}
+                                    category= {am.category}
+                                  />
+                                ))}
+                            </View>
+                          </View>
+
+                          :
+
+                          null
+
+                          }
+
+                            {Security != null ?
+
+                              <View style={styles.section}>
+                                                  <Text style={styles.sectionTitle}>Security</Text>
+                                        <View style={styles.categories}>
+
+
+                                        {Security.map((am,index)=> (
+                                          <Amenities
+                                            name={am.name}
+                                            icon={am.icon}
+                                            key={am.index}
+                                            index={am.index}
+                                            color={am.color}
+                                            category= {am.category}
+                                          />
+                                        ))}
+                                        </View>
+                                      </View>
+
+                                    : null
+
+                            }
+
+
+                            {TransportationTechnology!=null ?
+
+                              <View style={styles.section}>
+                                                  <Text style={styles.sectionTitle}>Transportation & Technology</Text>
+                                        <View style={styles.categories}>
+
+                                        {TransportationTechnology.map((am,index)=> (
+                                          <Amenities
+                                            name={am.name}
+                                            icon={am.icon}
+                                            key={am.index}
+                                            index={am.index}
+                                            color={am.color}
+                                            category= {am.category}
+                                          />
+                                        ))}
+
+                                        </View>
+                                      </View>
+
+                                      :
+
+                                      null
+                            }
+
+
+                              {Services != null ?
+
+                                <View style={styles.section}>
+                                                    <Text style={styles.sectionTitle}>Services</Text>
+                                          <View style={styles.categories}>
+
+                                          {Services.map((am,index)=> (
+                                            <Amenities
+                                              name={am.name}
+                                              icon={am.icon}
+                                              key={am.index}
+                                              index={am.index}
+                                              color={am.color}
+                                              category= {am.category}
+                                            />
+                                          ))}
+
+                                          </View>
+                                        </View>
+
+                                          :
+                                          null
+
+                              }
+
+
+
                           </View>
                         </View>
 
@@ -201,6 +471,57 @@ var services = `Services: Gym - weekly cleaning service - 24/7 security guards -
 
           </MapView>
         </View>
+
+
+                <View style={styles.section}>
+                                    <Text style={styles.sectionTitle}>Contact Details</Text>
+                          <View style={{
+                            flexDirection: 'row',
+
+
+                          }}>
+
+                              <View style={styles.categoryContainer2}>
+                                <MaterialCommunityIcons
+                                  name="phone"
+                                  size={28}
+                                  color="#fff"
+                                  onPress={initiateCall}
+                                />
+
+                              </View>
+
+
+                              <View style={styles.categoryContainer2}>
+                                <MaterialCommunityIcons
+                                  name="whatsapp"
+                                  size={28}
+                                  color="#fff"
+                                  onPress={initiateWhatsApp}
+                                />
+
+                              </View>
+
+                              <View style={styles.categoryContainer2}>
+                              <MaterialCommunityIcons
+                                name="email"
+                                size={28}
+                                color="#fff"
+                                onPress={initiateMail}
+                              />
+
+                              </View>
+                          </View>
+                        </View>
+
+                        <View style={{padding:16}}>
+                        <FormButton
+                         buttonTitle="DELETE PROPERTY"
+                         onPress={deleteProperty}
+                        />
+                        </View>
+
+
       </HeaderImageScrollView>
     </View>
   );
@@ -254,6 +575,14 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 15,
   },
+  categoryContainer2: {
+    flexDirection: 'row',
+    backgroundColor: '#008000',
+padding: 12,
+margin: 1,
+paddingHorizontal: 38,
+  },
+
   category: {
     fontSize: 14,
     color: '#fff',

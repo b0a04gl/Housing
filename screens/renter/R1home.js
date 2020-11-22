@@ -22,7 +22,7 @@ const CardListScreen = ({navigation}) => {
               var key = keys[index];
 
               x.push(temp[key]);
-              x[index]['id'] = key;
+              x[index]['propID'] = key;
               //console.log(x[index]);
             }
             setMyProperties(x);
@@ -35,6 +35,7 @@ const CardListScreen = ({navigation}) => {
         });
       }
 
+  
     }, []);
 
 

@@ -102,9 +102,11 @@ class R1add extends Component {
      longitudeDelta: 0.1
    },
    markers: [],
-propDescription:'type here...',
+propDescription:null,
 height:30,
-
+contactNo:null,
+mailId : null,
+whatsappNo : null,
       user: Firebase.auth().currentUser
     }
 
@@ -197,6 +199,21 @@ height:30,
 saveToDB = () =>{
 
 
+  const route = this.props.route;
+
+
+
+
+
+  if(route.params!=null && route.params.smarkers!=null)
+  {
+  const {  smarkers, amenities} = route.params;
+
+console.log(amenities);
+
+// console.log("smarkers????????????////"+this.state.markers[0].latlng.latitude);
+
+
 
 
     let locations=[];
@@ -220,9 +237,13 @@ saveToDB = () =>{
     propData['bathroomCount'] = this.state.bathroomCount;
     propData['imageURL'] = this.state.imageURL;
 
-    propData['markers'] = this.state.markers;
+    propData['markers'] = smarkers;
     propData['propDescription'] = this.state.propDescription;
-    propData['frequency'] = this.state.frequency;
+    propData['frequency'] = this.state.frequency==0?'Yearly':(this.state.frequency==1?'Monthly' : 'Weekly');
+    propData['amenities'] = amenities;
+    propData['contactNo'] = this.state.contactNo;
+    propData['mailId'] = this.state.mailId;
+    propData['whatsappNo'] = this.state.whatsappNo;
     // console.log(propData['location']);
 
     Firebase.database().ref('/properties/'+this.state.user.uid).push(propData).then(() => {
@@ -248,6 +269,8 @@ saveToDB = () =>{
 
 
     this.props.navigation.navigate('Home');
+
+  }
 }
 
 
@@ -309,7 +332,7 @@ saveToDB = () =>{
                           borderColor: '#ccc',
                           borderRadius: 25,
                       },
-                      onTextChange: text => alert(text)
+                      onTextChange: {}
                     }
                   }
                   listProps={
@@ -648,10 +671,10 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
 
   <View style={{padding:16, alignItems: 'center',
   justifyContent: 'center'}}>
-      <Text style={{ color: '#000', fontSize: 20,padding:30}}>
+      <Text style={{ color: '#000', fontSize: 20,padding:20}}>
         Description
       </Text>
-      <View style={{borderWidth:1,alignSelf:'center'}}>
+      <View style={{borderWidth:1}}>
             <TextInput
 
                 multiline={true}
@@ -661,10 +684,16 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
                 onContentSizeChange={(event) => {
                     this.setState({ height: event.nativeEvent.contentSize.height })
                 }}
-                style={[styles.default, {height: Math.max(75, this.state.height),width:300}]}
+                style={[styles.default, {height: Math.max(35, this.state.height),width:300}]}
                 value={this.state.propDescription}
+                placeholder='TYPE...'
               />
 </View>
+<TouchableOpacity style={styles.button} onPress={()=> {Toast.show('Description added successfully 👋', Toast.SHORT, [
+'UIAlertController',
+]);}}>
+ <Text style={styles.text}>Done</Text>
+ </TouchableOpacity>
 </View>
 
 
@@ -709,28 +738,80 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
 
 
 
-                 <View style={{}}>
-                 <Text style={{ color: '#000', fontSize: 25 ,padding:10}}>
+                 <View style={{padding:16}}>
+                 <Text style={{ color: '#000', fontSize: 20 ,padding:10}}>
                    Geo Locations
                  </Text>
 
-                 <Text style={{ color: '#000', fontSize: 17,alignSelf:'center' ,padding:10}}>
-                      Press any place in the map to mark the location
-                 </Text>
-                     <View style={[styles.section, {height: 250}]}>
-                           <MapView style={{flex: 1}} provider={PROVIDER_GOOGLE} region={this.state.region}
-                 onPress={(e) => this.setState({ markers: [...this.state.markers, { latlng: e.nativeEvent.coordinate }] })}>
-                 {
-                     this.state.markers.map((marker, i) => (
-                         <MapView.Marker key={i} coordinate={marker.latlng} />
-                     ))
-                 }
-                 </MapView>
-                     </View>
+                 <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddGeoLocation')}}>
+                  <Text style={styles.text}>Add Geo location</Text>
+                  </TouchableOpacity>
                  </View>
 
+                 <View
+                   style={{
+                     borderBottomColor: 'black',
+                     borderBottomWidth: 1,
+                   }}
+                 />
 
 
+
+
+
+                   <View style={{padding:16}}>
+                   <Text style={{ color: '#000', fontSize: 20 ,padding:10}}>
+                     Amenities / Features
+                   </Text>
+
+                   <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddAmenities')}}>
+                    <Text style={styles.text}>Add Amenities / Features</Text>
+                    </TouchableOpacity>
+                   </View>
+
+
+                   <View
+                     style={{
+                       borderBottomColor: 'black',
+                       borderBottomWidth: 1,
+                     }}
+                   />
+
+                     <View style={{padding:16, alignItems: 'center',
+                     justifyContent: 'center'}}>
+                         <Text style={{ color: '#000', fontSize: 20,padding:20}}>
+                           Contact Details
+                         </Text>
+                         <TextInput
+                            value={this.state.contactNo}
+                            onChangeText={
+                              (cellNumber) => {this.setState({contactNo: cellNumber})}
+                            }
+                            placeholder={'Enter Contact Number Here'}
+                            keyboardType="numeric"
+                            style={styles.textInputStyle}
+                          />
+
+                          <TextInput
+                             value={this.state.mailId}
+                             onChangeText={
+                               (mailId) => {this.setState({mailId: mailId})}
+                             }
+                             placeholder={'Enter Mail ID Here'}
+                             style={styles.textInputStyle}
+                           />
+
+                           <TextInput
+                              value={this.state.whatsappNo}
+                              onChangeText={
+                                (whatsappNo) => {this.setState({whatsappNo: whatsappNo})}
+                              }
+                              placeholder={'Enter WhatsApp Number Here'}
+                              keyboardType="numeric"
+                              style={styles.textInputStyle}
+                            />
+
+                   </View>
 
 
  <View style={{padding:16}}>
@@ -753,6 +834,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
+
+  textInputStyle: {
+      height: 42,
+      borderColor: 'blue',
+      borderWidth: 1,
+      width: '75%',
+      paddingHorizontal: 10,
+      marginTop: 20
+    },
+
   scrollView: {
 
 

@@ -6,6 +6,8 @@ import AddProperty from "./R1add";
 import Profile from "./R1profile";
 import EditProfile from './R1editProfile';
 import CardDetails from './CardDetails';
+import AddGeoLocation from './AddGeoLocation';
+import AddAmenities from './AddAmenities';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const Stack = createStackNavigator();
 
@@ -56,6 +58,7 @@ const MainStackNavigator = ({navigation}) => {
       })}
       />
 
+
     </Stack.Navigator>
   );
 }
@@ -83,7 +86,21 @@ const AddPropertyStackNavigator = ({navigation}) => {
            }}
       />
 
+      <Stack.Screen name="AddGeoLocation" component={AddGeoLocation}
 
+      options={({route}) => ({
+        // title: route.params.title,
+
+      })}
+      />
+
+      <Stack.Screen name="AddAmenities" component={AddAmenities}
+
+      options={({route}) => ({
+        // title: route.params.title,
+
+      })}
+      />
     </Stack.Navigator>
   );
 }
