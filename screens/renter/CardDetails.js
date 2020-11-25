@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef,useState} from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import qs from 'qs';
 import call from 'react-native-phone-call';
 import FormButton from '../../components/FormButton';
-
+import { SliderBox } from 'react-native-image-slider-box';
 const MIN_HEIGHT = Platform.OS === 'ios' ? 90 : 55;
 const MAX_HEIGHT = 350;
 
@@ -78,7 +78,7 @@ function Amenities ({ name,icon,index,color,category })  {
 const CardItemDetails = ({navigation,route}) => {
 
 
-
+const [imageIndex,setImageIndex] = useState(null);
   const itemData = route.params.itemData;
   const navTitleView = useRef(null);
 
@@ -107,7 +107,7 @@ const Security = itemData.amenities[4];
 const TransportationTechnology = itemData.amenities[5];
 const Services = itemData.amenities[6];
 
-const frequency = itemData.frequency==null ? 'Only' : itemData.frequency; 
+const frequency = itemData.frequency==null ? 'Only' : itemData.frequency;
 
 const initiateCall = () => {
     // Check for perfect 10 digit length
@@ -450,6 +450,25 @@ navigation.navigate('Home');
                           </View>
                         </View>
 
+                        <View style={{paddingTop: 0,
+                        flex: 1}}>
+
+<Text style={[styles.sectionTitle,{padding:20}]}>Gallery</Text>
+                        <SliderBox
+                            images={itemData.gallery}
+                            sliderBoxHeight={400}
+                            autoplay
+                            circleLoop
+                            dotColor="#2e64e5"
+                            currentImageEmitter={index => {
+
+                                setImageIndex(index)
+                            }
+                            } />
+
+
+                          </View>
+
         <View style={[styles.section, {height: 250}]}>
 
   <Text style={styles.sectionTitle}>Geo Locations</Text>
@@ -480,8 +499,8 @@ navigation.navigate('Home');
 
 
                           }}>
+<TouchableOpacity style = {styles.categoryContainer2}>
 
-                              <View style={styles.categoryContainer2}>
                                 <MaterialCommunityIcons
                                   name="phone"
                                   size={28}
@@ -489,10 +508,10 @@ navigation.navigate('Home');
                                   onPress={initiateCall}
                                 />
 
-                              </View>
+                          </TouchableOpacity>
 
 
-                              <View style={styles.categoryContainer2}>
+                            <TouchableOpacity style = {styles.categoryContainer2}>
                                 <MaterialCommunityIcons
                                   name="whatsapp"
                                   size={28}
@@ -500,9 +519,9 @@ navigation.navigate('Home');
                                   onPress={initiateWhatsApp}
                                 />
 
-                              </View>
+                                  </TouchableOpacity>
 
-                              <View style={styles.categoryContainer2}>
+                              <TouchableOpacity style = {styles.categoryContainer2} >
                               <MaterialCommunityIcons
                                 name="email"
                                 size={28}
@@ -510,7 +529,7 @@ navigation.navigate('Home');
                                 onPress={initiateMail}
                               />
 
-                              </View>
+                            </TouchableOpacity>
                           </View>
                         </View>
 

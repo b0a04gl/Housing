@@ -207,7 +207,7 @@ saveToDB = () =>{
 
   if(route.params!=null && route.params.smarkers!=null)
   {
-  const {  smarkers, amenities} = route.params;
+  const {  smarkers, amenities, gallery} = route.params;
 
 console.log(amenities);
 
@@ -245,28 +245,59 @@ console.log(amenities);
     propData['mailId'] = this.state.mailId;
     propData['whatsappNo'] = this.state.whatsappNo;
     // console.log(propData['location']);
-
+    propData['gallery'] = gallery;
     Firebase.database().ref('/properties/'+this.state.user.uid).push(propData).then(() => {
 
 
-      this.setState({
-        image: null,
-        imageURL:null,
-        propType: 2,
-        propSubtype: null,
-        propPrice:0,
-        propArea:0,
-        bedCount:0,
-        bathroomCount:0,
-        selectedItems: []
 
-      });
 
 
     }).catch((error) => {
         console.log(error);
     });
 
+
+    var currUser = {
+      uid : this.state.user.uid,
+      displayName : this.state.user.displayName,
+      email : this.state.user.email,
+      
+    };
+
+
+    Firebase.database().ref('/users/renters/'+this.state.user.uid).set(currUser).then(() => {
+
+    }).catch((error) => {
+        console.log(error);
+    });
+
+
+    this.setState({
+      action:null,
+      image: null,
+      imageURL:null,
+      frequency:null,
+      propType: 2,
+      propSubtype: null,
+      propPrice:0,
+      propArea:0,
+      bedCount:0,
+      bathroomCount:0,
+      selectedItems: [],
+      region: {
+     latitude: 13.067439,
+     longitude: 80.237617,
+     latitudeDelta: 0.1,
+     longitudeDelta: 0.1
+   },
+   markers: [],
+propDescription:null,
+height:30,
+contactNo:null,
+mailId : null,
+whatsappNo : null,
+
+    });
 
     this.props.navigation.navigate('Home');
 
@@ -709,7 +740,7 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
            <View style={{padding:16, alignItems: 'center',
     justifyContent: 'center'}}>
                  <Text style={{ color: '#000', fontSize: 20,padding:30}}>
-                   Images
+                  Header Image
                  </Text>
 
                  <Image style={styles.image} source={{ uri: this.state.image }} />
@@ -726,6 +757,31 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
          </View>
     </View>
 
+    <View
+      style={{
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+      }}
+    />
+
+
+    <View style={{padding:16}}>
+    <Text style={{ color: '#000', fontSize: 20 ,padding:10}}>
+      Gallery Images
+    </Text>
+
+    <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddMultiImages')}}>
+     <Text style={styles.text}>Add Multiple Images for Gallery</Text>
+     </TouchableOpacity>
+    </View>
+
+    <View
+      style={{
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+      }}
+    />
+
 
                <View
                  style={{
@@ -733,10 +789,6 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
                    borderBottomWidth: 1,
                  }}
                />
-
-
-
-
 
                  <View style={{padding:16}}>
                  <Text style={{ color: '#000', fontSize: 20 ,padding:10}}>
@@ -837,7 +889,7 @@ const styles = StyleSheet.create({
 
   textInputStyle: {
       height: 42,
-      borderColor: 'blue',
+      borderColor: '#2e64e5',
       borderWidth: 1,
       width: '75%',
       paddingHorizontal: 10,

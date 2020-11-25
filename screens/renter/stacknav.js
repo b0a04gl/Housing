@@ -8,6 +8,8 @@ import EditProfile from './R1editProfile';
 import CardDetails from './CardDetails';
 import AddGeoLocation from './AddGeoLocation';
 import AddAmenities from './AddAmenities';
+import AddMultiImages from './AddMultiImages';
+
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const Stack = createStackNavigator();
 
@@ -101,6 +103,15 @@ const AddPropertyStackNavigator = ({navigation}) => {
 
       })}
       />
+
+      <Stack.Screen name="AddMultiImages" component={AddMultiImages}
+
+      options={({route}) => ({
+        // title: route.params.title,
+
+      })}
+      />
+
     </Stack.Navigator>
   );
 }

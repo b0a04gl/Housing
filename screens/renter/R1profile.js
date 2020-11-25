@@ -6,6 +6,7 @@ import Firebase from '../../firebaseConfig';
 import {AuthContext} from '../../navigation/AuthProvider';
 import FormButton from '../../components/FormButton';
 
+const currentUser = Firebase.auth().currentUser;
 
 const colors = {
   themeColor: "#4263ec",
@@ -89,6 +90,11 @@ function Task ({ task, icon, theme, stamp,navigation })  {
             otherParam: ''+task,
 
           });
+
+
+
+
+          
 }}
         />
 

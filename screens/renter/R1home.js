@@ -9,6 +9,9 @@ const CardListScreen = ({navigation}) => {
   const [myProperties, setMyProperties] = React.useState([]);
   const user = Firebase.auth().currentUser;
     useEffect(() => {
+
+
+
       let dbRef = Firebase.database().ref('/properties/'+user.uid);
       if (dbRef) {
         dbRef.on('value', (data) => {
@@ -35,7 +38,7 @@ const CardListScreen = ({navigation}) => {
         });
       }
 
-  
+
     }, []);
 
 

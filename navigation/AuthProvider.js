@@ -1,5 +1,5 @@
 import React, {createContext, useState} from 'react';
-// import auth from '@react-native-firebase/auth';
+import {Alert} from 'react-native';
 import Firebase from '../firebaseConfig';
 export const AuthContext = createContext();
 
@@ -16,15 +16,36 @@ export const AuthProvider = ({children}) => {
           try {
             Firebase.auth().signInWithEmailAndPassword(email, password);
 
+
           } catch (e) {
             console.log(e);
+            Alert.alert(
+                  "Login Authentication Error",
+                  {e},
+                  [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                  ],
+                  { cancelable: false }
+                );
+
           }
         },
         register: async (email, password,userType) => {
           try {
             Firebase.auth().createUserWithEmailAndPassword(email, password)
+
+
+
           } catch (e) {
-            console.log(e);
+            console.log("error"+e);
+            Alert.alert(
+                  "Signup Authentication Error",
+                  {e},
+                  [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                  ],
+                  { cancelable: false }
+                );
           }
         },
         logout: async () => {

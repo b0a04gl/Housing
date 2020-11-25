@@ -49,19 +49,13 @@ const SignupScreen = ({navigation}) => {
 
       <FormInput
         labelValue={confirmPassword}
-        onChangeText={(userPassword) => setPassword(userPassword)}
+        onChangeText={(userPassword) => setConfirmPassword(userPassword)}
         placeholderText="Confirm Password"
         iconType="lock"
         secureTextEntry={true}
       />
 
-<View style={styles.container2}>
-    <Dropdown
-        label='Which User are you?'
-        data={data}
-        onChangeText={(userType) => setUserType(userType)}
-      />
-    </View>
+
 
       <FormButton
         buttonTitle="Sign Up"

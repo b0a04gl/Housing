@@ -16,9 +16,9 @@ const SignupScreen = ({navigation,route}) => {
 
 
   const [email, setEmail] = useState(user.email);
-  const [newEmail, setNewEmail] = useState('Enter your new email Id');
+  const [newEmail, setNewEmail] = useState(null);
 
-  const [dname, setDname] = user.displayName==null? useState('Enter your Display Name'):useState(user.displayName);
+  const [dname, setDname] = user.displayName==null? useState(null):useState(user.displayName);
 
 
   const [password, setPassword] = useState(null);
@@ -108,7 +108,7 @@ const {  otherParam } = route.params;
         <FormInput
           labelValue={email}
           onChangeText={(userEmail) => setEmail(userEmail)}
-          placeholderText="Email"
+          placeholderText="Enter your current EmailID"
           iconType="user"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -117,7 +117,7 @@ const {  otherParam } = route.params;
         <FormInput
           labelValue={newEmail}
           onChangeText={(userEmail) => setNewEmail(userEmail)}
-          placeholderText="Email"
+          placeholderText="Enter your new EmailID"
           iconType="user"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -145,7 +145,7 @@ const {  otherParam } = route.params;
         <FormInput
           labelValue={dname}
           onChangeText={(dname) => setDname(dname)}
-          placeholderText="Display Name"
+          placeholderText="Enter your Display Name"
           iconType="user"
           keyboardType="email-address"
           autoCapitalize="none"

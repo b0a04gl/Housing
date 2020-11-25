@@ -16,11 +16,18 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
+
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "ios": {
+     "bundleIdentifier": "com.infotix.housingRenter",
+     "buildNumber": "1.0.0",
+     "supportsTablet": true
+   },
+   "android": {
+     "package": "com.infotix.housingRenter",
+     "versionCode": 1
+   }
   }
 }
