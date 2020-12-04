@@ -27,7 +27,14 @@
    },
    "android": {
      "package": "com.infotix.housingRenter",
-     "versionCode": 1
+     "versionCode": 1,
+	"config": {
+	      "googleMaps": {
+		"apiKey": "AIzaSyA-qISD183RIy0ll219vtCcV45m9ckQSww"
+	      }
+	    }
    }
   }
 }
+
+

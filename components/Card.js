@@ -1,18 +1,11 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Card = ({itemData, onPress}) => {
 
 
-var locations = '';
-
-for(var i=0;i<itemData.locations.length;i++)
-{
-  locations += itemData.locations[i]+", ";
-}
-
-locations = locations.substring(0,locations.length-2);
+var locations = itemData.locations;
 
 var freq = itemData.frequency!=null ? itemData.frequency : '';
 
@@ -28,6 +21,7 @@ var freq = itemData.frequency!=null ? itemData.frequency : '';
         </View>
         <View style={styles.cardInfo}>
         <Text style={styles.cardTitle}>${itemData.propPrice+" "+freq}</Text>
+        
           <Text style={styles.cardDetails}>{locations}</Text>
         <Text style={styles.cardDetails}>{itemData.bedCount+" Beds  "+itemData.bathroomCount+" Baths "+itemData.propArea+" Sqft"}</Text>
 

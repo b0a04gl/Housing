@@ -334,7 +334,7 @@ save = () => {
 
 
 
-class AddAmenities extends Component {
+class SearchAmenities extends Component {
 
 
   constructor(props)
@@ -418,8 +418,8 @@ saveAmenties = () =>{
 
   // console.log(finalSelects);
 
-  
-  this.props.navigation.navigate('AddProperty', {
+
+  this.props.navigation.navigate('Search', {
 
   amenities: finalSelects,
 
@@ -572,7 +572,7 @@ componentDidMount =() =>{
   }
 }
 
-export default AddAmenities;
+export default SearchAmenities;
 
 const styles = StyleSheet.create({
   container: {

@@ -33,43 +33,86 @@ const component6= () => <Text>Yearly</Text>
 const component7= () => <Text>Monthly</Text>
 const component8 = () => <Text>Weekly</Text>
 
-const citiesData =[
+const City = [
   {
       id:1,
-      name : 'Mumbai'
-  },{
-    id:2,
-    name : 'Chennai'
-  },{
-    id:3,
-    name : 'Kolkata'
-  },{
-    id:4,
-    name : 'Bangalore'
-  },{
-    id:5,
-    name : 'Hyderabad'
+      name : 'Chennai',
+      taluks: [
+
+        {
+          id: 1,
+          name : 'Adayar',
+          latitude: 13.003387,
+          longitude:80.255043
+        },
+        {
+          id: 2,
+          name : 'Ambattur',
+          latitude: 13.1143167,
+          longitude:80.1480551
+        },
+        {
+          id: 3,
+          name : 'Egmore',
+          latitude: 13.073226,
+          longitude:80.260918
+        },
+        {
+          id: 4,
+          name : 'Guindy',
+          latitude: 13.010236,
+          longitude:80.215652
+        },
+        {
+          id:5,
+          name : 'Tambaram',
+          latitude:12.922915,
+          longitude:80.127457
+        },
+      ]
   },
+
+
   {
-    id:6,
-    name : 'Ahmedabad'
+      id:2,
+      name : 'Trichy',
+      taluks: [
+        {
+          id:1,
+          name : 'Lalgudi',
+          latitude:10.879162,
+          longitude:78.812485
+        },
+        {
+          id: 2,
+          name : 'Manachanallur',
+          latitude: 10.904663048,
+          longitude:78.701330528
+        },
+        {
+          id: 3,
+          name : 'Musiri',
+          latitude:10.95299 ,
+          longitude:78.44427
+        },
+        {
+          id: 4,
+          name : 'SriRangam',
+          latitude:  10.85603,
+          longitude:78.696597
+        },
+        {
+          id: 5,
+          name : 'Puvalur',
+          latitude: 10.896694,
+          longitude:78.83029
+        }
+      ]
   },
-  {
-    id:7,
-    name : 'Pune'
-  },
-  {
-    id:8,
-    name : 'Amaravathi'
-  },{
-    id:9,
-    name:'Vishag'
-  },
-  {
-    id:10,
-    name:'Jaipur'
-  }
+
 ];
+
+
 
 
 class R1add extends Component {
@@ -84,6 +127,7 @@ class R1add extends Component {
   constructor (props) {
     super(props);
     this.state = {
+      taluksData:[],
       action:null,
       image: null,
       imageURL:null,
@@ -94,7 +138,8 @@ class R1add extends Component {
       propArea:0,
       bedCount:0,
       bathroomCount:0,
-      selectedItems: [],
+      selectedItems1: [],
+      selectedItems2: [],
       region: {
      latitude: 13.067439,
      longitude: 80.237617,
@@ -112,6 +157,7 @@ whatsappNo : null,
 
     this.updateIndex = this.updateIndex.bind(this)
     this.saveToDB = this.saveToDB.bind(this)
+    this.onClear = this.onClear.bind(this)
   }
 
   selectPicture = async () => {
@@ -213,19 +259,21 @@ console.log(amenities);
 
 // console.log("smarkers????????????////"+this.state.markers[0].latlng.latitude);
 
-
+var propID = Firebase.database().ref('/properties/'+this.state.user.uid).push().getKey();
 
 
     let locations=[];
 
-    for(var i=0;i<this.state.selectedItems.length;i++)
-        locations.push(this.state.selectedItems[i].name);
+    for(var i=0;i<this.state.selectedItems2.length;i++)
+        locations.push(this.state.selectedItems2[i].name);
 
     var today  = new Date();
 
     console.log(today.toLocaleDateString("en-US")); // 9/17/2016
 
     let propData = [];
+
+    propData['propID'] = propID;
     propData['action'] = this.state.action==0?'Sell':(this.state.action==1?'Lease':'Rent');
     propData['date'] = today.toLocaleDateString("en-US");
     propData['locations'] = locations;
@@ -246,7 +294,9 @@ console.log(amenities);
     propData['whatsappNo'] = this.state.whatsappNo;
     // console.log(propData['location']);
     propData['gallery'] = gallery;
-    Firebase.database().ref('/properties/'+this.state.user.uid).push(propData).then(() => {
+    propData['owner'] = this.state.user.uid;
+    
+    Firebase.database().ref('/properties/'+this.state.user.uid+'/'+propID).set(propData).then(() => {
 
 
 
@@ -261,7 +311,7 @@ console.log(amenities);
       uid : this.state.user.uid,
       displayName : this.state.user.displayName,
       email : this.state.user.email,
-      
+
     };
 
 
@@ -272,37 +322,48 @@ console.log(amenities);
     });
 
 
-    this.setState({
-      action:null,
-      image: null,
-      imageURL:null,
-      frequency:null,
-      propType: 2,
-      propSubtype: null,
-      propPrice:0,
-      propArea:0,
-      bedCount:0,
-      bathroomCount:0,
-      selectedItems: [],
-      region: {
-     latitude: 13.067439,
-     longitude: 80.237617,
-     latitudeDelta: 0.1,
-     longitudeDelta: 0.1
-   },
-   markers: [],
-propDescription:null,
-height:30,
-contactNo:null,
-mailId : null,
-whatsappNo : null,
-
-    });
 
     this.props.navigation.navigate('Home');
 
   }
 }
+
+
+componentDidUpdate() {
+
+  }
+
+
+onClear = () => {
+  this.setState ({
+    action:null,
+    image: null,
+    imageURL:null,
+    frequency:null,
+    propType: 2,
+    propSubtype: null,
+    propPrice:0,
+    propArea:0,
+    bedCount:0,
+    bathroomCount:0,
+    selectedItems: [],
+    region: {
+   latitude: 13.067439,
+   longitude: 80.237617,
+   latitudeDelta: 0.1,
+   longitudeDelta: 0.1
+ },
+ markers: [],
+propDescription:null,
+height:30,
+contactNo:null,
+mailId : null,
+whatsappNo : null,
+user: Firebase.auth().currentUser
+  });
+
+}
+
 
 
   render () {
@@ -317,9 +378,42 @@ whatsappNo : null,
     return (
 
       <ScrollView keyboardShouldPersistTaps="handled">
+      <View style={{padding:36}}>
+     <FormButton
+       buttonTitle="CLEAR"
+       onPress={() => {
+         this.setState ({
+           action:null,
+           image: null,
+           imageURL:null,
+           frequency:null,
+           propType: 2,
+           propSubtype: null,
+           propPrice:0,
+           propArea:0,
+           bedCount:0,
+           bathroomCount:0,
+           selectedItems: [],
+           region: {
+          latitude: 13.067439,
+          longitude: 80.237617,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1
+        },
+        markers: [],
+       propDescription:null,
+       height:30,
+       contactNo:null,
+       mailId : null,
+       whatsappNo : null,
+       user: Firebase.auth().currentUser
+         })
+       }}
+     />
+     </View>
       <View style={{ padding: 16 }}>
         <Text style={{ color: '#000', fontSize: 20 }}>
-          Location
+        City
         </Text>
 
       </View>
@@ -327,17 +421,18 @@ whatsappNo : null,
                 {/* Multi */}
                 <SearchableDropdown
                   multi={true}
-                  selectedItems={this.state.selectedItems}
+                  selectedItems={this.state.selectedItems1}
                   onItemSelect={(item) => {
-                    var items = this.state.selectedItems;
+                    var items = this.state.selectedItems1;
                     items=[];
                     items.push(item)
-                    this.setState({ selectedItems: items });
+
+                    this.setState({ selectedItems1: items, taluksData : item.taluks });
                   }}
                   containerStyle={{ padding: 5 }}
                   onRemoveItem={(item, index) => {
-                    const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
-                    this.setState({ selectedItems: items });
+                    const items = this.state.selectedItems1.filter((sitem) => sitem.id !== item.id);
+                    this.setState({ selectedItems1: items });
                   }}
                   itemStyle={{
                     padding: 10,
@@ -349,10 +444,10 @@ whatsappNo : null,
                   }}
                   itemTextStyle={{ color: '#222' }}
                   itemsContainerStyle={{ maxHeight: 140 }}
-                  items={citiesData}
+                  items={City}
                   defaultIndex={0}
                   chip={true}
-                  resetValue={false}
+                  resetValue={true}
                   textInputProps={
                     {
                       placeholder: "Select the location",
@@ -374,12 +469,83 @@ whatsappNo : null,
                 />
 
       </Fragment>
+
+
+
+      <View style={{ padding: 16 }}>
+        <Text style={{ color: '#000', fontSize: 20 }}>
+          Taluks
+        </Text>
+
+      </View>
+      <Fragment>
+                {/* Multi */}
+                <SearchableDropdown
+                  multi={true}
+                  selectedItems={this.state.selectedItems2}
+                  onItemSelect={(item) => {
+                    var items = this.state.selectedItems2;
+                    items=[];
+                    items.push(item)
+                    this.setState({ selectedItems2: items });
+                  }}
+                  containerStyle={{ padding: 5 }}
+                  onRemoveItem={(item, index) => {
+                    const items = this.state.selectedItems2.filter((sitem) => sitem.id !== item.id);
+                    this.setState({ selectedItems2: items });
+                  }}
+                  itemStyle={{
+                    padding: 10,
+                    marginTop: 2,
+                    backgroundColor: '#ddd',
+                    borderColor: '#bbb',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                  }}
+                  itemTextStyle={{ color: '#222' }}
+                  itemsContainerStyle={{ maxHeight: 140 }}
+                  items={this.state.taluksData}
+                  defaultIndex={0}
+                  chip={true}
+                resetValue={true}
+                  textInputProps={
+                    {
+                      placeholder: "Select the location",
+                      underlineColorAndroid: "transparent",
+                      style: {
+                          padding: 15,
+                          borderWidth: 1,
+                          borderColor: '#ccc',
+                          borderRadius: 25,
+                      },
+                      onTextChange: {}
+                    }
+                  }
+                  listProps={
+                    {
+                      nestedScrollEnabled: true,
+                    }
+                  }
+                />
+
+      </Fragment>
       <View
         style={{
           borderBottomColor: 'black',
           borderBottomWidth: 1,
+          padding:20,
         }}
       />
+
+
+
+
+
+
+
+
+
+
       <View style={{ padding: 16 }}>
         <Text style={{ color: '#000', fontSize: 20 }}>
           Action
@@ -573,7 +739,7 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
                         <NumericInput
                           value={this.state.propPrice}
                           onChange={value => {this.setState({propPrice:value})}}
-                          onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                          onLimitReached={(isMax,msg) => {this.setState({propPrice:0})}}
                           totalWidth={180}
                           totalHeight={50}
                           iconSize={25}
@@ -795,7 +961,12 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
                    Geo Locations
                  </Text>
 
-                 <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddGeoLocation')}}>
+                 <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddGeoLocation',{region: {
+                   latitude: this.state.selectedItems2[0].latitude,
+                   longitude: this.state.selectedItems2[0].longitude,
+                   latitudeDelta: 0.1,
+                   longitudeDelta: 0.1
+                 }})}}>
                   <Text style={styles.text}>Add Geo location</Text>
                   </TouchableOpacity>
                  </View>
@@ -816,7 +987,7 @@ onPress={()=>{this.setState({propSubtype:"Showroom"})}}
                      Amenities / Features
                    </Text>
 
-                   <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddAmenities')}}>
+                   <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('AddAmenities',{type:'add'})}}>
                     <Text style={styles.text}>Add Amenities / Features</Text>
                     </TouchableOpacity>
                    </View>

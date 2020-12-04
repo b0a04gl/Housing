@@ -80,18 +80,13 @@ const CardItemDetails = ({navigation,route}) => {
 
 const [imageIndex,setImageIndex] = useState(null);
   const itemData = route.params.itemData;
+  // console.log("ID>>>>>>>>>>>>>" +itemData.propID )
+  const type = route.params.type;
   const navTitleView = useRef(null);
 
   console.log("region  "+itemData.markers[0].latlng.latitude);
 
-  var locations = '';
-
-  for(var i=0;i<itemData.locations.length;i++)
-  {
-    locations += itemData.locations[i]+", ";
-  }
-
-  locations = locations.substring(0,locations.length-2);
+  var locations = itemData.locations;
 
   var description = `Furnished Apartment For Rent In A Residential Complex, Al Olaya, North Riyadh
 The Residence located in Al Olaya district. Nearby kingdom tower
@@ -201,12 +196,15 @@ navigation.navigate('Home');
         )}
         renderForeground={() => (
           <View style={styles.titleContainer}>
+          
             <Text style={styles.imageTitle}>{itemData.propType+"    |   "+itemData.propSubtype}</Text>
+
           </View>
         )}
         renderFixedForeground={() => (
           <Animatable.View style={styles.navTitleView} ref={navTitleView}>
             <Text style={styles.navTitle}>{itemData.propType+"    |   "+itemData.propSubtype}</Text>
+
           </Animatable.View>
         )}>
         <TriggeringView
@@ -216,9 +214,11 @@ navigation.navigate('Home');
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={styles.title}>${itemData.propPrice+" "+frequency} </Text>
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-                <Text style={styles.cardDetails}>{locations}</Text>
+                <Text style={styles.title}>{locations}</Text>
+
 
             </View>
+
           </View>
         </TriggeringView>
 
@@ -533,12 +533,16 @@ navigation.navigate('Home');
                           </View>
                         </View>
 
-                        <View style={{padding:16}}>
-                        <FormButton
-                         buttonTitle="DELETE PROPERTY"
-                         onPress={deleteProperty}
-                        />
-                        </View>
+                        {
+                          type == 'MyProperty' ? <View style={{padding:16}}>
+                          <FormButton
+                           buttonTitle="DELETE PROPERTY"
+                           onPress={deleteProperty}
+                          />
+                          </View>
+                          :
+                          null
+                        }
 
 
       </HeaderImageScrollView>

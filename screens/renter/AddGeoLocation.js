@@ -18,13 +18,15 @@ class AddGeoLocation extends Component {
   constructor(props)
   {
     super(props);
+    const route = this.props.route;
+        const {region } =  route.params;
 
     this.state={
 
 markers: [],
       region: {
-     latitude: 28.644800,
-     longitude: 77.216721,
+     latitude: region.latitude,
+     longitude: region.longitude,
      latitudeDelta: 0.1,
      longitudeDelta: 0.1
    },
@@ -38,6 +40,9 @@ markers: [],
 
 
   render(){
+const route = this.props.route;
+    const {region } =  route.params;
+    console.log("marked region..."+region.latitude);
     return (
       <View style={styles.container}>
 
@@ -46,7 +51,7 @@ markers: [],
       </Text>
 
       <MapView
-        provider={PROVIDER_GOOGLE}
+     provider={PROVIDER_GOOGLE}
         style={{flex: 1}}
         region={this.state.region}
         onPress={(e) => this.setState({ markers: [...this.state.markers, { latlng: e.nativeEvent.coordinate }], region:{

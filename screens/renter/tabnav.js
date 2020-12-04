@@ -2,7 +2,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { MainStackNavigator, AddPropertyStackNavigator,ProfileStackNavigator } from "./stacknav";
+import { MainStackNavigator, WishlistStackNavigator,AddPropertyStackNavigator,ProfileStackNavigator } from "./stacknav";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
@@ -18,11 +18,11 @@ const BottomTabNavigator = () => {
     }}
        />
 
-      <Tab.Screen name="AddProperty" component={AddPropertyStackNavigator}
+      <Tab.Screen name="Wishlist" component={WishlistStackNavigator}
       options={{
-                tabBarLabel: 'AddProperty',
+                tabBarLabel: 'Wishlist',
                 tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="key-plus" color={color} size={size} />
+                  <MaterialCommunityIcons name="heart" color={color} size={size} />
                 ),
               }}
 
