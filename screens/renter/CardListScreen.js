@@ -91,7 +91,7 @@ this.setState({propSubtype:propSubtype , isLoading:true});
 
 
 
-    console.log("state :: "+this.state.myProperties);
+    // console.log("state :: "+this.state.myProperties);
     if(this.state.myProperties!=null && this.state.myProperties.length!=0)
     {
       return (

@@ -80,7 +80,7 @@ export default class Admin extends React.Component {
                 });
             })
             .catch((e) => console.log('uploading image error => ', e));
-        console.log(this.state.imagesDeck);
+        // console.log(this.state.imagesDeck);
     };
 
     DeleteImageHandler = index => {

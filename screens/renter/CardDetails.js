@@ -84,7 +84,7 @@ const [imageIndex,setImageIndex] = useState(null);
   const type = route.params.type;
   const navTitleView = useRef(null);
 
-  console.log("region  "+itemData.markers[0].latlng.latitude);
+  // console.log("region  "+itemData.markers[0].latlng.latitude);
 
   var locations = itemData.locations;
 
@@ -196,7 +196,7 @@ navigation.navigate('Home');
         )}
         renderForeground={() => (
           <View style={styles.titleContainer}>
-          
+
             <Text style={styles.imageTitle}>{itemData.propType+"    |   "+itemData.propSubtype}</Text>
 
           </View>

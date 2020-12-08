@@ -42,7 +42,7 @@ markers: [],
   render(){
 const route = this.props.route;
     const {region } =  route.params;
-    console.log("marked region..."+region.latitude);
+    // console.log("marked region..."+region.latitude);
     return (
       <View style={styles.container}>
 

@@ -237,7 +237,7 @@ whatsappNo : null,
 
   updateIndex (selectedIndex) {
 
-    console.log(selectedIndex);
+    // console.log(selectedIndex);
 
     this.setState({propType:selectedIndex})
   }
@@ -255,7 +255,7 @@ saveToDB = () =>{
   {
   const {  smarkers, amenities, gallery} = route.params;
 
-console.log(amenities);
+// console.log(amenities);
 
 // console.log("smarkers????????????////"+this.state.markers[0].latlng.latitude);
 
@@ -269,7 +269,7 @@ var propID = Firebase.database().ref('/properties/'+this.state.user.uid).push().
 
     var today  = new Date();
 
-    console.log(today.toLocaleDateString("en-US")); // 9/17/2016
+    // console.log(today.toLocaleDateString("en-US")); // 9/17/2016
 
     let propData = [];
 
@@ -295,7 +295,7 @@ var propID = Firebase.database().ref('/properties/'+this.state.user.uid).push().
     // console.log(propData['location']);
     propData['gallery'] = gallery;
     propData['owner'] = this.state.user.uid;
-    
+
     Firebase.database().ref('/properties/'+this.state.user.uid+'/'+propID).set(propData).then(() => {
 
 
@@ -307,19 +307,6 @@ var propID = Firebase.database().ref('/properties/'+this.state.user.uid).push().
     });
 
 
-    var currUser = {
-      uid : this.state.user.uid,
-      displayName : this.state.user.displayName,
-      email : this.state.user.email,
-
-    };
-
-
-    Firebase.database().ref('/users/renters/'+this.state.user.uid).set(currUser).then(() => {
-
-    }).catch((error) => {
-        console.log(error);
-    });
 
 
 

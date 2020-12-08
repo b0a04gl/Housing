@@ -11,19 +11,47 @@ function Heart(props) {
 const itemData = props.itemData;
 const use = props.use;
 
+var currentWishlist=[];
 
-const [isWished,setIsWished] = React.useState(itemData.isWished);
+const [isWished,setIsWished] = React.useState(false);
 const [isFirst,setIsFirst] = React.useState(true);
 const [key,setKey] = React.useState(null);
 
-let path = [];
-path['absPath'] = "/properties/"+itemData.owner+"/"+itemData.propID;
+const user = Firebase.auth().currentUser;
 
 useEffect(() => {
 
 
+  Firebase.database().ref('/users/renters/'+user.uid+"/wishlist").on('value', (data) => {
+
+    // console.log(data.val());
+    if (data.val()) {
+      var temp = data.val();
+      var keys = Object.keys(temp);
+      // console.log("keys"+keys);
+      // console.log("current propID"+itemData.propID);
+
+      currentWishlist = keys;
+
+  // console.log("reuslts : "+currentWishlist.includes(itemData.propID));
+
+  setIsWished(currentWishlist.includes(itemData.propID));
+
+}
 
 });
+
+
+},[]);
+
+
+
+
+
+
+
+let path = [];
+path['absPath'] = "/properties/"+itemData.owner+"/"+itemData.propID;
 
 const handle = () => {
 
@@ -34,34 +62,38 @@ const handle = () => {
 
   if(!isWished)
   {
-    console.log(itemData.propID+" is wished");
+    // console.log(itemData.propID+" is wished");
 
-    itemData.isWished = true;
 
-    Firebase.database().ref(path['absPath']).set(itemData).then(() => {
+  itemData.isWished = true;
+
+
+
+    Firebase.database().ref('/users/renters/'+user.uid+"/wishlist/"+itemData.propID).set(itemData).then(() => {
 
     }).catch((error) => {
         console.log(error);
     });
+
+
 
 
   }
   else {
-    console.log(itemData.propID+" is unwished");
+    // console.log(itemData.propID+" is unwished");
     itemData.isWished = false;
 
-    Firebase.database().ref(path['absPath']).set(itemData).then(() => {
+    Firebase.database().ref('/users/renters/'+user.uid+"/wishlist/"+itemData.propID).remove().then(() => {
 
     }).catch((error) => {
         console.log(error);
     });
-
   }
 
 
 }
 
-console.log("key>>>>>>"+key);
+// console.log("key>>>>>>"+key);
 
   return (
     <View style={{flexDirection: 'row', marginRight: 10}}>

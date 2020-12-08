@@ -33,7 +33,7 @@ const {  otherParam } = route.params;
     user.updateEmail(newEmail).then(function() {
       // Update successful.
 
-      console.log(newEmail);
+      // console.log(newEmail);
 
       Toast.show('New Email id has been updated 👋', Toast.SHORT, [
 'UIAlertController',
@@ -76,7 +76,7 @@ const {  otherParam } = route.params;
 
   //
 
-      console.log("updated dname..."+user.displayName);
+      // console.log("updated dname..."+user.displayName);
 
       Toast.show('Display name updated 👋', Toast.SHORT, [
 'UIAlertController',

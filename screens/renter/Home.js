@@ -15,9 +15,25 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import Firebase from '../../firebaseConfig';
 
 const HomeScreen = ({navigation}) => {
+
+  var user = Firebase.auth().currentUser;
+
+  var currUser = {
+    uid : user.uid,
+    displayName : user.displayName,
+    email : user.email,
+    
+  };
+
+
+  Firebase.database().ref('/users/renters/'+user.uid).set(currUser).then(() => {
+
+  }).catch((error) => {
+      console.log(error);
+  });
 
 
   return (

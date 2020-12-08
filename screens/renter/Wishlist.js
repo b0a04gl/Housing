@@ -25,61 +25,41 @@ export default class Wishlist extends React.Component {
 
   getData = () => {
 
-this.setState({isLoading:true});
+    this.setState({isLoading:true});
 
-    let allusers = Firebase.database().ref('/properties');
-          var useruids = [];
-          if (allusers) {
-            allusers.on('value', (data) => {
+    const user = Firebase.auth().currentUser;
+
+    let dbRef = Firebase.database().ref('/users/renters/'+user.uid+"/wishlist");
+          if (dbRef) {
+            dbRef.on('value', (data) => {
 
               // console.log(data.val());
               if (data.val()) {
                 var temp = data.val();
                 var keys = Object.keys(temp);
-                useruids = keys;
+                var x = [];
+                for (var index = 0; index < keys.length; index++) {
+                  var key = keys[index];
+
+                  x.push(temp[key]);
+                  // x[index]['propID'] = key;
+                  //console.log(x[index]);
                 }
-              });
-        }
 
-    var required = [];
 
-    for(var i=0;i<useruids.length;i++)
-    {
-      // console.log(useruids[i]);
-      var ref = Firebase.database().ref("/properties/"+useruids[i]);
-      var query = ref.orderByChild("isWished").equalTo(true);
-      query.once("value", (data) => {
-
-          // console.log(data.val());
-          if (data.val()) {
-            var temp = data.val();
-            var keys = Object.keys(temp);
-            var x = [];
-            for (var index = 0; index < keys.length; index++) {
-              var key = keys[index];
-
-              required.push(temp[key]);
-
-            };
+    this.setState({myProperties:x,isLoading:false});
+              }
+              else {
+              this.setState({myProperties:x,isLoading:false});
+              }
+            });
           }
-        });
-    }
-
-    if(required!=null)
-    {
-      this.setState({myProperties:required,isLoading:false});
-
-
-    }
-    else {
-            this.setState({myProperties:required,isLoading:false});
-    }
 
 
   }
 
   render() {
-    console.log("state :: "+this.state.myProperties);
+    // console.log("state :: "+this.state.myProperties);
     if(this.state.myProperties!=null && this.state.myProperties.length!=0)
     {
       return (

@@ -26,7 +26,7 @@ console.log(Object.keys(results));
 
           for(var i=0;i<Object.keys(results).length;i++)
           {
-            console.log(results[keys[i]]);
+            // console.log(results[keys[i]]);
             x.push(results[keys[i]]);
           }
 
