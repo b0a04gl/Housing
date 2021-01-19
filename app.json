@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "sample",
-    "slug": "sample",
+    "name": "Housing-RR",
+    "slug": "Housing-RR",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,12 +21,12 @@
       "favicon": "./assets/favicon.png"
     },
     "ios": {
-     "bundleIdentifier": "com.infotix.housingRenter",
+     "bundleIdentifier": "com.infotix.housingRR",
      "buildNumber": "1.0.0",
      "supportsTablet": true
    },
    "android": {
-     "package": "com.infotix.housingRenter",
+     "package": "com.infotix.housingRR",
      "versionCode": 1,
 	"config": {
 	      "googleMaps": {
@@ -36,5 +36,3 @@
    }
   }
 }
-
-

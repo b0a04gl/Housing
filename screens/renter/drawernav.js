@@ -2,9 +2,10 @@ import React from "react";
 
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from '@react-navigation/native';
-import { ProfileStackNavigator,AddPropertyStackNavigator ,WishlistStackNavigator,MyPropertyStackNavigator} from "./stacknav";
+import { ProfileStackNavigator,AddPropertyStackNavigator ,WishlistStackNavigator,MyPropertyStackNavigator,NotificationsStackNavigator} from "./stacknav";
 import BottomTabNavigator from "./tabnav";
 import Search from './Search';
+
 
 const Drawer = createDrawerNavigator();
 
@@ -18,6 +19,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Wishlist" component={WishlistStackNavigator} />
       <Drawer.Screen name="Add Property" component={AddPropertyStackNavigator} />
       <Drawer.Screen name="My Property" component={MyPropertyStackNavigator} />
+      <Drawer.Screen name="Notifications" component={NotificationsStackNavigator} />
     </Drawer.Navigator>
 
   );

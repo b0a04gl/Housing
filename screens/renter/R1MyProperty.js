@@ -14,7 +14,7 @@ export default class Wishlist extends React.Component {
     return (
                   <Card
                      itemData={item}
-                     onPress={()=> this.props.navigation.navigate('CardDetails', {itemData: item,type:'NotMine'})}
+                     onPress={()=> this.props.navigation.navigate('CardDetails', {itemData: item,type:'MyProperty'})}
                  />
     )
   }

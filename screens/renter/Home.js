@@ -17,70 +17,104 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Firebase from '../../firebaseConfig';
 
+
+const ImageUi = ({source}) => {
+  return(
+    <View style={styles.slide}>
+            <Image
+              source={{ uri: source}}
+              resizeMode="cover"
+              style={styles.sliderImage}
+            />
+          </View>
+  );
+}
+
+
 const HomeScreen = ({navigation}) => {
 
   var user = Firebase.auth().currentUser;
 
-  var currUser = {
-    uid : user.uid,
-    displayName : user.displayName,
-    email : user.email,
-    
-  };
+
+  const [imagesDeck,setImagesDeck] = React.useState([]);
+  const [currentUser,setCurrentUser] = React.useState(null);
+
+  React.useEffect(() => {
+    Firebase.database().ref('/admin/imagesDeck').on('value', (data) => {
+
+          if (data.val()) {
+             setImagesDeck(data.val());
+          }
+
+  }
+  );
 
 
-  Firebase.database().ref('/users/renters/'+user.uid).set(currUser).then(() => {
+
+
+  }, []);
+
+
+// var x = null;
+//
+//   Firebase.database().ref('/users/renters/'+user.uid).on('value', (data) => {
+//
+//         if (data.val()) {
+//            x = data.val();
+//         }
+//
+// }
+// );
+//
+//
+//   var currUser = {
+//     uid : user.uid,
+//     displayName : user.displayName,
+//     email : user.email,
+//
+//   };
+//
+//   console.log(x+" n");
+
+  Firebase.database().ref('/users/renters/'+user.uid+"/uid").set(user.uid).then(() => {
+
+  }).catch((error) => {
+      console.log(error);
+  });
+
+  Firebase.database().ref('/users/renters/'+user.uid+"/displayName").set(user.displayName).then(() => {
+
+  }).catch((error) => {
+      console.log(error);
+  });
+
+  Firebase.database().ref('/users/renters/'+user.uid+"/email").set(user.email).then(() => {
 
   }).catch((error) => {
       console.log(error);
   });
 
 
+
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle='light-content' />
       <View style={styles.sliderContainer}>
-        <Swiper
-          autoplay
-          horizontal={false}
-          height={200}
-          activeDotColor="#FF6347">
-          <View style={styles.slide}>
-            <Image
-              source={require('../../assets/banners/house-banner1.jpg')}
-              resizeMode="cover"
-              style={styles.sliderImage}
-            />
-          </View>
-          <View style={styles.slide}>
-            <Image
-              source={require('../../assets/banners/house-banner2.jpg')}
-              resizeMode="cover"
-              style={styles.sliderImage}
-            />
-          </View>
-          <View style={styles.slide}>
-            <Image
-              source={require('../../assets/banners/house-banner3.jpg')}
-              resizeMode="cover"
-              style={styles.sliderImage}
-            />
-          </View>
-          <View style={styles.slide}>
-            <Image
-              source={require('../../assets/banners/house-banner4.jpg')}
-              resizeMode="cover"
-              style={styles.sliderImage}
-            />
-          </View>
-          <View style={styles.slide}>
-            <Image
-              source={require('../../assets/banners/house-banner5.jpg')}
-              resizeMode="cover"
-              style={styles.sliderImage}
-            />
-          </View>
-        </Swiper>
+      <Swiper
+        autoplay
+        horizontal={false}
+        height={200}
+        activeDotColor="#FF6347">
+
+
+              {imagesDeck.map((am,index)=> (
+                            <ImageUi
+                             source={am.uri}
+                            />
+                          ))}
+
+
+      </Swiper>
       </View>
 
       <View style={styles.categoryContainer}>

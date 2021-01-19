@@ -16,7 +16,7 @@ import Search from './Search';
 import SearchAmenities from './SearchAmenities';
 import SearchResults from './SearchResults';
 import MapViewScreen from './MapViewScreen';
-
+import Notifications from './Notifications';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Heart from '../../components/Heart';
@@ -409,5 +409,48 @@ const ProfileStackNavigator = ({navigation}) => {
   );
 }
 
+const NotificationsStackNavigator = ({navigation}) => {
+  return (
+    <Stack.Navigator screenOptions={screenOptionStyle}>
 
-export { MainStackNavigator, WishlistStackNavigator,AddPropertyStackNavigator,ProfileStackNavigator,MyPropertyStackNavigator };
+    <Stack.Screen name="Notifications" component={Notifications}
+    options={{
+
+             headerTitleAlign: 'center',
+             headerLeft: () => (
+               <View style={{marginLeft: 10}}>
+                 <Icon.Button
+                   name="ios-menu"
+                   size={25}
+                   color='#fff'
+                   backgroundColor='#4263ec'
+                   onPress={() => navigation.openDrawer()}
+                 />
+               </View>
+             ),
+             headerRight: () => (
+               <View style={{flexDirection: 'row', marginRight: 10}}>
+                 <Icon.Button
+                   name="ios-search"
+                   size={25}
+                   color='#fff'
+                   backgroundColor='#4263ec'
+                   onPress={() => navigation.navigate('Search')}
+                 />
+
+               </View>
+             ),
+
+         }}
+
+    />
+
+
+
+
+    </Stack.Navigator>
+  );
+}
+
+
+export { MainStackNavigator, WishlistStackNavigator,AddPropertyStackNavigator,ProfileStackNavigator,MyPropertyStackNavigator,NotificationsStackNavigator };
